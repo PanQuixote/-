@@ -6,13 +6,13 @@
 #include<string.h>
 #include<math.h>
 
-//½«num×ª»¯Îªint£¬Èç¹û²»ºÏ·¨£¬·µ»Ø-1
+//å°†numè½¬åŒ–ä¸ºintï¼Œå¦‚æœä¸åˆæ³•ï¼Œè¿”å›-1
 int transform_into_int(char* num)
 {
 	int n = 0;
 	char n_t[10] = { 0 };
 	strcpy(n_t, num);
-	for (int i = 0; i < strlen(n_t); i++)//½«charÊı×é×ª»¯ÎªÊı×Ö£¬Èç¹ûÎª²»ºÏ·¨µÄÊı×ÖÔòÍË³ö
+	for (int i = 0; i < strlen(n_t); i++)//å°†charæ•°ç»„è½¬åŒ–ä¸ºæ•°å­—ï¼Œå¦‚æœä¸ºä¸åˆæ³•çš„æ•°å­—åˆ™é€€å‡º
 	{
 		if (!(n_t[i] >= '0'&&n_t[i] <= '9'))
 		{
@@ -25,7 +25,7 @@ int transform_into_int(char* num)
 	return n;
 }
 
-//Çå³ıÎÄ¼şÄÚµÄÄÚÈİ
+//æ¸…é™¤æ–‡ä»¶å†…çš„å†…å®¹
 void clear_file(char* file_name)
 {
 	FILE *fp;
@@ -34,11 +34,11 @@ void clear_file(char* file_name)
 	fclose(fp);
 }
 
-//½«¾ØÕósudokuÊä³öµ½file_name
+//å°†çŸ©é˜µsudokuè¾“å‡ºåˆ°file_name
 void print_sudoku(char* file_name, int sudo[][9])
 {
 	FILE *fp;
-	fp = fopen(file_name, "a+");//ÒÔ×·¼Ó·½Ê½Ğ´Èë
+	fp = fopen(file_name, "a+");//ä»¥è¿½åŠ æ–¹å¼å†™å…¥
 
 	for (int i = 0; i < 9; i++)
 	{
@@ -56,16 +56,16 @@ void print_sudoku(char* file_name, int sudo[][9])
 	fclose(fp);
 }
 
-//ÅĞ¶ÏÔÚsudo[x][y]ÉÏ·ÅÖÃÊı×ÖnumÊÇ·ñ·ûºÏ¹æÔò£¬ÊÇÔò·µ»Ø1£¬·ñÔò·µ»Ø0
+//åˆ¤æ–­åœ¨sudo[x][y]ä¸Šæ”¾ç½®æ•°å­—numæ˜¯å¦ç¬¦åˆè§„åˆ™ï¼Œæ˜¯åˆ™è¿”å›1ï¼Œå¦åˆ™è¿”å›0
 int is_suit(int sudo[][9], int x, int y, int num)
 {
-	for (int k = 0; k < 9; k++)//ÅĞ¶Ïµ±Ç°µÄĞĞ»òÕßÁĞÓĞÃ»ÓĞÏàÍ¬µÄÊı×Ö
+	for (int k = 0; k < 9; k++)//åˆ¤æ–­å½“å‰çš„è¡Œæˆ–è€…åˆ—æœ‰æ²¡æœ‰ç›¸åŒçš„æ•°å­—
 	{
 		if (sudo[x][k] == num || sudo[k][y] == num)
 			return 0;
 	}
 
-	//ÅĞ¶Ïµ±Ç°µÄ¹¬ÊÇ·ñÓĞÏàÍ¬µÄÊı×Ö
+	//åˆ¤æ–­å½“å‰çš„å®«æ˜¯å¦æœ‰ç›¸åŒçš„æ•°å­—
 	for (int i = 3 * (x / 3); i < 3 * (x / 3) + 3; i++)
 	{
 		for (int j = 3 * (y / 3); j < 3 * (y / 3) + 3; j++)
@@ -78,7 +78,7 @@ int is_suit(int sudo[][9], int x, int y, int num)
 	return 1;
 }
 
-//½«old_sudo¸´ÖÆµ½new_sudo
+//å°†old_sudoå¤åˆ¶åˆ°new_sudo
 void copy_sudo(int old_sudo[][9], int new_sudo[][9])
 {
 	for (int i = 0; i < 9; i++)
@@ -90,50 +90,50 @@ void copy_sudo(int old_sudo[][9], int new_sudo[][9])
 	}
 }
 
-//µİ¹é£¬½«num·ÅÖÃµ½¿ÕÎ»ÖÃpos£¨0~80£©ÉÏ,Ö±µ½ËùÓĞµÄ¿ÕÎ»ÖÃ±»ÌîÂú£¬ÌîºÃµÄÊı¶À´æÔÚresultÖĞ
+//é€’å½’ï¼Œå°†numæ”¾ç½®åˆ°ç©ºä½ç½®posï¼ˆ0~80ï¼‰ä¸Š,ç›´åˆ°æ‰€æœ‰çš„ç©ºä½ç½®è¢«å¡«æ»¡ï¼Œå¡«å¥½çš„æ•°ç‹¬å­˜åœ¨resultä¸­
 void place_num(int sudo[][9], int pos, int num, int result[][9])
 {
 	int copy[9][9] = { 0 };
 	copy_sudo(sudo, copy);
 
-	if (pos >= 0)//µ±Ç°Î»ÖÃºÏ·¨£¬½«´ËÎ»ÖÃÖÃÎªnum
+	if (pos >= 0)//å½“å‰ä½ç½®åˆæ³•ï¼Œå°†æ­¤ä½ç½®ç½®ä¸ºnum
 		copy[pos/9][pos%9] = num;
 
-	//ÕÒµ½ÏÂÒ»¸ö¶ÔÓ¦µÄÊı×ÖÎª0µÄÎ»ÖÃ
+	//æ‰¾åˆ°ä¸‹ä¸€ä¸ªå¯¹åº”çš„æ•°å­—ä¸º0çš„ä½ç½®
 	do
 	{
 		pos++;
-		if (pos > 80)//µ±Ç°Êı¶ÀÒÑÊÇÖÕ¾Ö
+		if (pos > 80)//å½“å‰æ•°ç‹¬å·²æ˜¯ç»ˆå±€
 		{
 			copy_sudo(copy, result);
 			return;
 		}
 	} while (copy[pos / 9][pos % 9] != 0);
 
-	//³¢ÊÔ½«´ËÎ»ÖÃÖÃÎªn£¬nµÄ·¶Î§ÊÇ1~9
+	//å°è¯•å°†æ­¤ä½ç½®ç½®ä¸ºnï¼Œnçš„èŒƒå›´æ˜¯1~9
 	for (int n = 1; n <= 9; n++)
 	{
-		if (is_suit(copy, pos/9, pos%9, n) == 1)//Èç¹ûµ±Ç°Î»ÖÃÖÃÎªnºÏÊÊ£¬Ôòµİ¹éÉèÖÃÏÂÒ»¸öÎª0µÄÎ»ÖÃ
+		if (is_suit(copy, pos/9, pos%9, n) == 1)//å¦‚æœå½“å‰ä½ç½®ç½®ä¸ºnåˆé€‚ï¼Œåˆ™é€’å½’è®¾ç½®ä¸‹ä¸€ä¸ªä¸º0çš„ä½ç½®
 		{
 			place_num(copy, pos, n, result);
 		}
 	}
 }
 
-//´Óproblem_filenameÖĞ»ñÈ¡Êı¶À²¢Çó½â£¬ÊäÈëµ½result_filename
+//ä»problem_filenameä¸­è·å–æ•°ç‹¬å¹¶æ±‚è§£ï¼Œè¾“å…¥åˆ°result_filename
 int solve_problem(char* problem_filename, char* result_filename)
 {
 	FILE *fp;
 	fp = fopen(problem_filename, "r");
-	if (fp == NULL)//´ò¿ª¼ÇÂ¼Êı¶ÀÎÊÌâµÄÎÄ¼şÊ§°Ü
+	if (fp == NULL)//æ‰“å¼€è®°å½•æ•°ç‹¬é—®é¢˜çš„æ–‡ä»¶å¤±è´¥
 		return -1;
 
-	clear_file(result_filename);//Çå¿Õ¼ÇÂ¼½á¹ûµÄÎÄ¼ş
+	clear_file(result_filename);//æ¸…ç©ºè®°å½•ç»“æœçš„æ–‡ä»¶
 
 	while (1)
 	{
 		int sudo[9][9] = { 0 };
-		//»ñÈ¡81¸öÊı£¬Èç¹ûÎ´×ã81¸öÊı¾ÍÒÑ¶Áµ½ÎÄ¼şÎ²£¬ÔòÍË³ö£¬·µ»Ø0
+		//è·å–81ä¸ªæ•°ï¼Œå¦‚æœæœªè¶³81ä¸ªæ•°å°±å·²è¯»åˆ°æ–‡ä»¶å°¾ï¼Œåˆ™é€€å‡ºï¼Œè¿”å›0
 		for (int i = 0; i < 9; i++)
 		{
 			for (int j = 0; j < 9; j++)
@@ -141,7 +141,7 @@ int solve_problem(char* problem_filename, char* result_filename)
 				char tem;
 				do
 				{
-					if (fscanf(fp, "%c", &tem) == -1)//¶Áµ½ÎÄ¼şÎ²
+					if (fscanf(fp, "%c", &tem) == -1)//è¯»åˆ°æ–‡ä»¶å°¾
 					{
 						fclose(fp);
 						return 0;
@@ -160,7 +160,7 @@ int solve_problem(char* problem_filename, char* result_filename)
 	}
 }
 
-//Ò»¸öÊı¶ÀÖÕ¾ÖÄ£°å
+//ä¸€ä¸ªæ•°ç‹¬ç»ˆå±€æ¨¡æ¿
 char original_templet[9][9] = {
 	{ 'i','g','h','c','a','b','f','d','e' },
 	{ 'c','a','b','f','d','e','i','g','h' },
@@ -174,19 +174,19 @@ char original_templet[9][9] = {
 
 };
 
-//Éú³ÉÒ»¸ö°üº¬Êı×Ö1-9ÇÒ²»º¬ÖØ¸´Êı×ÖµÄËæ»úÊıÁĞse£¬ÓÃÓÚÌæ»»Ä£°åÖĞµÄ×ÖÄ¸¡£
-//ÆäÖĞÈÎÒâ×ÖÄ¸j¶ÔÓ¦µÄÊı×ÖÎªse[j-'a'+1]¡£
-//²ÎÊıxÎªÄ£°åÖĞµÄµÚÒ»ĞĞµÚÒ»ÁĞµÄ×ÖÄ¸¡££¨´Ë×ÖÄ¸¶ÔÓ¦µÄÊı×ÖÎª¶¨Öµ£©
+//ç”Ÿæˆä¸€ä¸ªåŒ…å«æ•°å­—1-9ä¸”ä¸å«é‡å¤æ•°å­—çš„éšæœºæ•°åˆ—seï¼Œç”¨äºæ›¿æ¢æ¨¡æ¿ä¸­çš„å­—æ¯ã€‚
+//å…¶ä¸­ä»»æ„å­—æ¯jå¯¹åº”çš„æ•°å­—ä¸ºse[j-'a'+1]ã€‚
+//å‚æ•°xä¸ºæ¨¡æ¿ä¸­çš„ç¬¬ä¸€è¡Œç¬¬ä¸€åˆ—çš„å­—æ¯ã€‚ï¼ˆæ­¤å­—æ¯å¯¹åº”çš„æ•°å­—ä¸ºå®šå€¼ï¼‰
 void generate_sequence(char x, int* se)
 {
-	srand((unsigned)time(NULL));//ÒÔÏµÍ³Ê±¼ä×÷ÎªËæ»úÊıµÄÖÖ×Ó
+	srand((unsigned)time(NULL));//ä»¥ç³»ç»Ÿæ—¶é—´ä½œä¸ºéšæœºæ•°çš„ç§å­
 
-	int exist[10] = { 0 };//¼ÇÂ¼Ä³¸öÊı×ÖÊÇ·ñÒÑ´æÔÚÓÚÊıÁĞÖĞ¡£Èç¹ûÊı×ÖyÒÑ´æÔÚ£¬Ôòexist[y]=1£¬·ñÔòexist[y]=0
+	int exist[10] = { 0 };//è®°å½•æŸä¸ªæ•°å­—æ˜¯å¦å·²å­˜åœ¨äºæ•°åˆ—ä¸­ã€‚å¦‚æœæ•°å­—yå·²å­˜åœ¨ï¼Œåˆ™exist[y]=1ï¼Œå¦åˆ™exist[y]=0
 
-	se[x - 'a'] = (5 + 5) % 9 + 1;//Éè¶¨×ÖÄ¸x¶ÔÓ¦µÄÊı×Ö¡£
-	exist[se[x - 'a']] = 1;//±ê¼Ç´ËÊı×Ö
+	se[x - 'a'] = (5 + 5) % 9 + 1;//è®¾å®šå­—æ¯xå¯¹åº”çš„æ•°å­—ã€‚
+	exist[se[x - 'a']] = 1;//æ ‡è®°æ­¤æ•°å­—
 
-	for (int i = 0; i < 9; i++)//Ëæ»úÉú³ÉÒ»¸ö·ûºÏÒªÇóµÄÊıÁĞ
+	for (int i = 0; i < 9; i++)//éšæœºç”Ÿæˆä¸€ä¸ªç¬¦åˆè¦æ±‚çš„æ•°åˆ—
 	{
 		if (i == x - 'a')
 			continue;
@@ -199,40 +199,40 @@ void generate_sequence(char x, int* se)
 	}
 }
 
-//ÓÉ¾ÉÄ£°åold_templet¾­¹ıĞĞ±ä»»»òÕßÁĞ±ä»»£¬Éú³ÉÒ»¸öĞÂµÄÄ£°ånew_templet£¬Í¬Ê±¸üĞÂ¾ÉÄ£°åÎªĞÂÄ£°å¡£±ä»»´ÎÊıÎªchange_time¡£
+//ç”±æ—§æ¨¡æ¿old_templetç»è¿‡è¡Œå˜æ¢æˆ–è€…åˆ—å˜æ¢ï¼Œç”Ÿæˆä¸€ä¸ªæ–°çš„æ¨¡æ¿new_templetï¼ŒåŒæ—¶æ›´æ–°æ—§æ¨¡æ¿ä¸ºæ–°æ¨¡æ¿ã€‚å˜æ¢æ¬¡æ•°ä¸ºchange_timeã€‚
 void generate_templet(int change_time, char old_templet[][9], char new_templet[][9])
 {
-	for (int i = 0; i < 9; i++)//¸´ÖÆ¾ÉÄ£°åµ½ĞÂÄ£°å
+	for (int i = 0; i < 9; i++)//å¤åˆ¶æ—§æ¨¡æ¿åˆ°æ–°æ¨¡æ¿
 		strcpy(new_templet[i], old_templet[i]);
 
-	while (change_time--)//±ä»»change_time´Î
+	while (change_time--)//å˜æ¢change_timeæ¬¡
 	{
-		srand((unsigned)time(NULL));//Éè¶¨Ëæ»úÊıµÄÖÖ×Ó
+		srand((unsigned)time(NULL));//è®¾å®šéšæœºæ•°çš„ç§å­
 
 
-		int line1, line2;//½«Òª±ä»»µÄĞĞ»òÁĞµÄ±àºÅ
+		int line1, line2;//å°†è¦å˜æ¢çš„è¡Œæˆ–åˆ—çš„ç¼–å·
 		line1 = rand() % 8 + 1;
 		line2 = rand() % 8 + 1;
-		while ((line1 == line2) || (line1/3 != line2/3))//²»¶ÏÉú³Éline2Ö±µ½·ûºÏÌõ¼ş
+		while ((line1 == line2) || (line1/3 != line2/3))//ä¸æ–­ç”Ÿæˆline2ç›´åˆ°ç¬¦åˆæ¡ä»¶
 		{
 			line2 = rand() % 8 + 1;
 		}
 
-		int change_way = rand() % 2;//±ä»»µÄ·½Ê½¡£change_way=0Ôò½øĞĞĞĞ±ä»»£¬change_way=1Ôò½øĞĞÁĞ±ä»»
-		if (change_way == 0)//ĞĞ±ä»»
+		int change_way = rand() % 2;//å˜æ¢çš„æ–¹å¼ã€‚change_way=0åˆ™è¿›è¡Œè¡Œå˜æ¢ï¼Œchange_way=1åˆ™è¿›è¡Œåˆ—å˜æ¢
+		if (change_way == 0)//è¡Œå˜æ¢
 		{
-			char tem;//ÁÙÊ±´æ´¢½«½»»»µÄ×ÖÄ¸
-			for (int i = 0; i < 9; i++)//½»»»µÚline1ĞĞºÍline2ĞĞµÄ×ÖÄ¸
+			char tem;//ä¸´æ—¶å­˜å‚¨å°†äº¤æ¢çš„å­—æ¯
+			for (int i = 0; i < 9; i++)//äº¤æ¢ç¬¬line1è¡Œå’Œline2è¡Œçš„å­—æ¯
 			{
 				tem = new_templet[line1][i];
 				new_templet[line1][i] = new_templet[line2][i];
 				new_templet[line2][i] = tem;
 			}
 		}
-		else//ÁĞ±ä»»
+		else//åˆ—å˜æ¢
 		{
-			char tem;//ÁÙÊ±´æ´¢½«½»»»µÄ×ÖÄ¸
-			for (int i = 0; i < 9; i++)//½»»»µÚline1ÁĞºÍline2ÁĞµÄ×ÖÄ¸
+			char tem;//ä¸´æ—¶å­˜å‚¨å°†äº¤æ¢çš„å­—æ¯
+			for (int i = 0; i < 9; i++)//äº¤æ¢ç¬¬line1åˆ—å’Œline2åˆ—çš„å­—æ¯
 			{
 				tem = new_templet[i][line1];
 				new_templet[i][line1] = new_templet[i][line2];
@@ -241,11 +241,11 @@ void generate_templet(int change_time, char old_templet[][9], char new_templet[]
 		}
 	}
 
-	for (int i = 0; i < 9; i++)//¸´ÖÆĞÂÄ£°åµ½¾ÉÄ£°å£¬ÓÃÓÚÏÂÒ»´Î±ä»»¡£
+	for (int i = 0; i < 9; i++)//å¤åˆ¶æ–°æ¨¡æ¿åˆ°æ—§æ¨¡æ¿ï¼Œç”¨äºä¸‹ä¸€æ¬¡å˜æ¢ã€‚
 		strcpy(old_templet[i], new_templet[i]);
 }
 
-//´òÓ¡Êı¶ÀÖÕ¾Öµ½ÎÄ¼şfile_nameÖĞ¡£seÎªÊıÁĞ£¬templetÎªÄ£°å¡£
+//æ‰“å°æ•°ç‹¬ç»ˆå±€åˆ°æ–‡ä»¶file_nameä¸­ã€‚seä¸ºæ•°åˆ—ï¼Œtempletä¸ºæ¨¡æ¿ã€‚
 void transform_into_sudo(int* se, char templet[][9], int sudo[][9])
 {
 	for (int i = 0; i < 9; i++)
@@ -257,56 +257,56 @@ void transform_into_sudo(int* se, char templet[][9], int sudo[][9])
 	}
 }
 
-//Éú³Én¸öÊı¶ÀÖÕ¾Öµ½ÎÄ¼şfile_nameÖĞ¡£
+//ç”Ÿæˆnä¸ªæ•°ç‹¬ç»ˆå±€åˆ°æ–‡ä»¶file_nameä¸­ã€‚
 void generate_sudoku(int n, char* file_name)
 {
-	//Çå¿ÕÎÄ¼şÄÚÈİ
+	//æ¸…ç©ºæ–‡ä»¶å†…å®¹
 	clear_file(file_name);
 
-	//ÉèÖÃ¾ÉÄ£°åÎªÔ­Ê¼Ä£°å
+	//è®¾ç½®æ—§æ¨¡æ¿ä¸ºåŸå§‹æ¨¡æ¿
 	char old_templet[9][9];
 	for (int i = 0; i < 9; i++)
 		strcpy(old_templet[i], original_templet[i]);
 
 
 	srand((unsigned)time(NULL));
-	int templet_sum = rand() % 25 + 25;//½ÓÏÂÀ´½«ÒªÊ¹ÓÃµÄÄ£°åÊı¡£Ã¿¸öÄ£°å×î¶à¿ÉÉú³ÉµÄÊı×éÖÕ¾ÖÎª8!£¬Ô¼4*10^4¸ö£¬
-									   //ÓÉÓÚ×î¶àÒªÇóÉú³É10^6¸öÖÕ¾Ö,ËùÒÔ×î¶àĞèÒª25¸öÄ£°å¡£
+	int templet_sum = rand() % 25 + 25;//æ¥ä¸‹æ¥å°†è¦ä½¿ç”¨çš„æ¨¡æ¿æ•°ã€‚æ¯ä¸ªæ¨¡æ¿æœ€å¤šå¯ç”Ÿæˆçš„æ•°ç»„ç»ˆå±€ä¸º8!ï¼Œçº¦4*10^4ä¸ªï¼Œ
+									   //ç”±äºæœ€å¤šè¦æ±‚ç”Ÿæˆ10^6ä¸ªç»ˆå±€,æ‰€ä»¥æœ€å¤šéœ€è¦25ä¸ªæ¨¡æ¿ã€‚
 
-	int se_sum = n / templet_sum + 1;//Ã¿¸öÄ£°åĞèÒªµÄÊıÁĞÊı
+	int se_sum = n / templet_sum + 1;//æ¯ä¸ªæ¨¡æ¿éœ€è¦çš„æ•°åˆ—æ•°
 
-	int sudo_sum = 0;//ÒÑÉú³ÉµÄÊı¶ÀÖÕ¾ÖÊı
+	int sudo_sum = 0;//å·²ç”Ÿæˆçš„æ•°ç‹¬ç»ˆå±€æ•°
 
 	for (int x = 1; x <= templet_sum; x++)
 	{
 		char new_templet[9][9];
-		generate_templet(rand() % 10 + 3, old_templet, new_templet);//Éú³ÉÒ»¸öĞÂÄ£°å¡£
+		generate_templet(rand() % 10 + 3, old_templet, new_templet);//ç”Ÿæˆä¸€ä¸ªæ–°æ¨¡æ¿ã€‚
 
 		for (int y = 1; y <= se_sum; y++)
 		{
 			int se[9] = { 0 };
-			generate_sequence(new_templet[0][0], se);//Éú³ÉÒ»¸öĞÂÊıÁĞ
+			generate_sequence(new_templet[0][0], se);//ç”Ÿæˆä¸€ä¸ªæ–°æ•°åˆ—
 
 			int sudo[9][9];
 			transform_into_sudo(se, new_templet, sudo);
 
-			print_sudoku(file_name, sudo);//´òÓ¡µ½ÎÄ¼ş
+			print_sudoku(file_name, sudo);//æ‰“å°åˆ°æ–‡ä»¶
 
 			sudo_sum++;
-			if (sudo_sum == n)//ÅĞ¶ÏÉú³ÉµÄÖÕ¾ÖÊıÊÇ·ñÒÑ´ïµ½ÒªÇó
+			if (sudo_sum == n)//åˆ¤æ–­ç”Ÿæˆçš„ç»ˆå±€æ•°æ˜¯å¦å·²è¾¾åˆ°è¦æ±‚
 				return;
 		}
 	}
 }
 
-//´Óendgame_filenameÖĞ¶ÁÈ¡ÖÕ¾Ö£¬×ª»¯ÎªÌâÄ¿Ğ´Èëproblem_filename
+//ä»endgame_filenameä¸­è¯»å–ç»ˆå±€ï¼Œè½¬åŒ–ä¸ºé¢˜ç›®å†™å…¥problem_filename
 void generate_problem(char* endgame_filename, char* problem_filename)
 {
 	FILE *fp1;
 	if((fp1 = fopen(endgame_filename, "r")) == NULL)
 		return;
 
-	clear_file(problem_filename);//ÇåÀí¼ÇÂ¼Êı¶ÀÌâÄ¿µÄÎÄ¼ş
+	clear_file(problem_filename);//æ¸…ç†è®°å½•æ•°ç‹¬é¢˜ç›®çš„æ–‡ä»¶
 
 	FILE *fp2;
 	fp2 = fopen(problem_filename, "a+");
@@ -315,7 +315,7 @@ void generate_problem(char* endgame_filename, char* problem_filename)
 	int sudo[9][9] = { 0 };
 	while (1)
 	{
-		//»ñÈ¡81¸öÊı£¬Èç¹ûÎ´×ã81¸öÊı¾ÍÒÑ¶Áµ½ÎÄ¼şÎ²£¬ÔòÍË³ö
+		//è·å–81ä¸ªæ•°ï¼Œå¦‚æœæœªè¶³81ä¸ªæ•°å°±å·²è¯»åˆ°æ–‡ä»¶å°¾ï¼Œåˆ™é€€å‡º
 		for (int i = 0; i < 9; i++)
 		{
 			for (int j = 0; j < 9; j++)
@@ -323,7 +323,7 @@ void generate_problem(char* endgame_filename, char* problem_filename)
 				char tem;
 				do
 				{
-					if (fscanf(fp1, "%c", &tem) == -1)//¶Áµ½ÎÄ¼şÎ²
+					if (fscanf(fp1, "%c", &tem) == -1)//è¯»åˆ°æ–‡ä»¶å°¾
 					{
 						fclose(fp1);
 						fclose(fp2);
@@ -359,37 +359,37 @@ void generate_problem(char* endgame_filename, char* problem_filename)
 	fclose(fp2);
 }
 
-//¼ì²âÎÄ¼şfilenameÖĞµÄÊı¶ÀÊÇ·ñÕıÈ·£¬²¢´òÓ¡½á¹û
+//æ£€æµ‹æ–‡ä»¶filenameä¸­çš„æ•°ç‹¬æ˜¯å¦æ­£ç¡®ï¼Œå¹¶æ‰“å°ç»“æœ
 int is_right(char* filename)
 {
 	FILE *fp;
 	fp = fopen(filename, "r");
-	if (fp == NULL)//´ò¿ªÎÄ¼şÊ§°Ü
+	if (fp == NULL)//æ‰“å¼€æ–‡ä»¶å¤±è´¥
 		return -1;
 
-	int check_result = 1;//¼ì²é½á¹û£¬ÍêÈ«ÎŞÎóÔòÎª1
-	int order_number = 0;//µ±Ç°¼ì²éµÄÊı¶ÀµÄ±àºÅ
+	int check_result = 1;//æ•´ä¸ªæ–‡ä»¶çš„æ£€æŸ¥ç»“æœï¼Œå®Œå…¨æ— è¯¯åˆ™ä¸º1
+	int order_number = 0;//å½“å‰æ£€æŸ¥çš„æ•°ç‹¬çš„ç¼–å·
 	while (1)
 	{
-		int error_cow = 0, error_col = 0;//·¢ÏÖµÄ´íÎóÔªËØµÄĞĞºÅºÍÁĞºÅ
-
+		int now_right = 1;//å½“å‰æ•°ç‹¬çš„æ£€æŸ¥ç»“æœï¼Œæ­£ç¡®ä¸º1ï¼Œé”™è¯¯ä¸º0
+		int error_cow = 0, error_col = 0;//å‘ç°çš„é”™è¯¯å…ƒç´ çš„è¡Œå·å’Œåˆ—å·
+		order_number++;
 		int sudo[9][9] = { 0 };
-		//»ñÈ¡81¸öÊı£¬Èç¹ûÎ´×ã81¸öÊı¾ÍÒÑ¶Áµ½ÎÄ¼şÎ²£¬ÔòÍË³ö£¬·µ»Ø0
+		//è·å–81ä¸ªæ•°ï¼Œå¦‚æœæœªè¶³81ä¸ªæ•°å°±å·²è¯»åˆ°æ–‡ä»¶å°¾ï¼Œåˆ™é€€å‡ºï¼Œè¿”å›0
 		for (int i = 0; i < 9; i++)
 		{
-			
 			for (int j = 0; j < 9; j++)
 			{
 				char tem;
 				do
 				{
-					if (fscanf(fp, "%c", &tem) == -1)//¶Áµ½ÎÄ¼şÎ²
+					if (fscanf(fp, "%c", &tem) == -1)//è¯»åˆ°æ–‡ä»¶å°¾
 					{
 						fclose(fp);
 
 						if (check_result == 1)
 						{
-							printf("¼ì²éÍê±Ï£¬ÎŞÎó\n");
+							printf("æ£€æŸ¥å®Œæ¯•ï¼Œæ— è¯¯\n");
 							return 1;
 						}
 						else
@@ -399,67 +399,17 @@ int is_right(char* filename)
 				} while (tem<'0' || tem>'9');
 
 				sudo[i][j] = tem - '0';
-			}
-		}
 
-		order_number++;
-
-		int grid_is_check[9] = { 0 };//Èôgrid_is_check[x]=0Ôò±íÊ¾µÚx¸ö¹¬Î´±»¼ì²é¹ı
-		for (int i = 0; i < 9; i++)
-		{
-			int check_line[10] = { 0 };	
-			for (int j = 0; j < 9; j++)
-			{
-				if (check_line[sudo[i][j]] != 0 )
+				if (now_right == 1 && (sudo[i][j] == 0 || is_suit(sudo, i, j, sudo[i][j]) != 1))
 				{
 					check_result = 0;
-					if (check_line[sudo[i][j]] != 0)
-					{
-						error_cow = i;
-						error_col = j;
-					}
-
-					printf("µÚ %d ºÅÊı¶À£¨%d, %d£©ÓĞÎó\n", order_number, error_cow+1, error_col+1);
-					
-					goto out;
-				}
-				else
-				{
-					check_line[sudo[i][j]] = 1;
-				}
-
-	
-				if (grid_is_check[3 * (i / 3) + (j / 3)] != 0)
-					continue;
-				else
-					grid_is_check[3 * (i / 3) + (j / 3)] = 1;
-
-				//¼ì²éµ±Ç°ÔªËØËùÔÚ¹¬ÄÚÊÇ·ñÓĞÖØ¸´ÔªËØ
-				int check_grid[10] = { 0 };
-				for (int x = 3 * (i / 3); x < 3 * (i / 3) + 3; x++)
-				{
-					for (int y = 3 * (j / 3); y < 3 * (j / 3) + 3; y++)
-					{
-						if (check_grid[sudo[x][y]] != 0)
-						{
-							check_result = 0;
-							error_cow = i;
-							error_col = j;
-							printf("µÚ %d ºÅÊı¶À£¨%d, %d£©ÓĞÎó\n", order_number, error_cow+1, error_col+1);
-							goto out;
-						}
-						else
-							check_grid[sudo[x][y]] = 1;
-					}
+					now_right = 0;
+					error_cow = i + 1;
+					error_col = j + 1;
+					printf("ç¬¬ %d å·æ•°ç‹¬ï¼ˆ%d, %dï¼‰æœ‰è¯¯\n", order_number, error_cow, error_col);
 				}
 			}
 		}
-
-		out:;
-
-
-
-
-		
 	}
+
 }
