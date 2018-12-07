@@ -56,22 +56,6 @@ void s_print_sudoku(char* file_name, int sudo[][9])
 	fclose(fp);
 }
 
-//将矩阵sudoku输出到file_name
-void g_print_sudoku(char* file_name, char sudo[][18])
-{
-	FILE *fp;
-	fp = fopen(file_name, "a+");//以追加方式写入
-
-	for (int i = 0; i < 9; i++)
-	{
-		fputs(sudo[i], fp);
-	}
-
-	fprintf(fp, "\n");
-
-	fclose(fp);
-}
-
 //判断在sudo[x][y]上放置数字num是否符合规则，是则返回1，否则返回0
 int is_suit(int sudo[][9], int x, int y, int num)
 {
@@ -272,12 +256,11 @@ void transform_into_sudo(int* se, char templet[][9], char sudo[][18])
 	{
 		for (int j = 0; j < 9; j++)
 		{
-			sudo[i][j] = se[templet[i][j] - 'a'] + '0';
+			sudo[i][j*2] = se[templet[i][j] - 'a'] + '0';
 		}
 
-		for (int k = 1; k < 15; k = k + 2)
+		for (int k = 1; k < 17; k = k + 2)
 			sudo[i][k] = ' ';
-
 		sudo[i][17] = '\n';
 	}
 }
@@ -287,6 +270,9 @@ void generate_sudoku(int n, char* file_name)
 {
 	//清空文件内容
 	clear_file(file_name);
+
+	FILE *fp;
+	fp = fopen(file_name, "a+");//以追加方式写入
 
 	//设置旧模板为原始模板
 	char old_templet[9][9];
@@ -312,14 +298,36 @@ void generate_sudoku(int n, char* file_name)
 			int se[9] = { 0 };
 			generate_sequence(new_templet[0][0], se);//生成一个新数列
 
-			char sudo[9][18];
-			transform_into_sudo(se, new_templet, sudo);
+			char sudo[9][9] = { 0 };
+			for (int i = 0; i < 9; i++)
+			{
+				for (int j = 0; j < 8; j++)
+				{
+					sudo[i][j] = se[new_templet[i][j] - 'a'] + '0';
+					fputc(sudo[i][j], fp);
+					fputc(' ', fp);
+				}
+				fputc(sudo[i][8], fp);
+				fputc('\n', fp);
+			}
+			fputc('\n', fp);
 
-			//g_print_sudoku(file_name, sudo);//打印到文件
+			//char sudo[9][18] = { 0 };
+			//transform_into_sudo(se, new_templet, sudo);
+
+
+			//for (int i = 0; i < 9; i++)
+			//{
+			//	fputs(sudo[i], fp);
+			//}
+			//fputs("\n", fp);
 
 			sudo_sum++;
 			if (sudo_sum == n)//判断生成的终局数是否已达到要求
+			{
+				fclose(fp);
 				return;
+			}
 		}
 	}
 }
