@@ -35,7 +35,7 @@ void clear_file(char* file_name)
 }
 
 //将矩阵sudoku输出到file_name
-void print_sudoku(char* file_name, int sudo[][9])
+void s_print_sudoku(char* file_name, int sudo[][9])
 {
 	FILE *fp;
 	fp = fopen(file_name, "a+");//以追加方式写入
@@ -49,6 +49,22 @@ void print_sudoku(char* file_name, int sudo[][9])
 		}
 
 		fprintf(fp, "%d\n", sudo[i][8]);
+	}
+
+	fprintf(fp, "\n");
+
+	fclose(fp);
+}
+
+//将矩阵sudoku输出到file_name
+void g_print_sudoku(char* file_name, char sudo[][18])
+{
+	FILE *fp;
+	fp = fopen(file_name, "a+");//以追加方式写入
+
+	for (int i = 0; i < 9; i++)
+	{
+		fputs(sudo[i], fp);
 	}
 
 	fprintf(fp, "\n");
@@ -97,7 +113,7 @@ void place_num(int sudo[][9], int pos, int num, int result[][9])
 	copy_sudo(sudo, copy);
 
 	if (pos >= 0)//当前位置合法，将此位置置为num
-		copy[pos/9][pos%9] = num;
+		copy[pos / 9][pos % 9] = num;
 
 	//找到下一个对应的数字为0的位置
 	do
@@ -110,10 +126,10 @@ void place_num(int sudo[][9], int pos, int num, int result[][9])
 		}
 	} while (copy[pos / 9][pos % 9] != 0);
 
-	//尝试将此位置置为n，n的范围是1~9
+	//尝试将此位置的下一位置置为n，n的范围是1~9
 	for (int n = 1; n <= 9; n++)
 	{
-		if (is_suit(copy, pos/9, pos%9, n) == 1)//如果当前位置置为n合适，则递归设置下一个为0的位置
+		if (is_suit(copy, pos / 9, pos % 9, n) == 1)//如果当前位置置为n合适，则递归设置下一个为0的位置
 		{
 			place_num(copy, pos, n, result);
 		}
@@ -130,6 +146,7 @@ int solve_problem(char* problem_filename, char* result_filename)
 
 	clear_file(result_filename);//清空记录结果的文件
 
+	int sudoku_sum = 0;
 	while (1)
 	{
 		int sudo[9][9] = { 0 };
@@ -144,7 +161,7 @@ int solve_problem(char* problem_filename, char* result_filename)
 					if (fscanf(fp, "%c", &tem) == -1)//读到文件尾
 					{
 						fclose(fp);
-						return 0;
+						return sudoku_sum;
 					}
 
 				} while (tem<'0' || tem>'9');
@@ -153,10 +170,12 @@ int solve_problem(char* problem_filename, char* result_filename)
 			}
 		}
 
+		sudoku_sum++;
+
 		int result[9][9] = { 0 };
 		place_num(sudo, -1, 0, result);
 
-		print_sudoku(result_filename, result);
+		//print_sudoku(result_filename, result);
 	}
 }
 
@@ -213,7 +232,7 @@ void generate_templet(int change_time, char old_templet[][9], char new_templet[]
 		int line1, line2;//将要变换的行或列的编号
 		line1 = rand() % 8 + 1;
 		line2 = rand() % 8 + 1;
-		while ((line1 == line2) || (line1/3 != line2/3))//不断生成line2直到符合条件
+		while ((line1 == line2) || (line1 / 3 != line2 / 3))//不断生成line2直到符合条件
 		{
 			line2 = rand() % 8 + 1;
 		}
@@ -245,15 +264,21 @@ void generate_templet(int change_time, char old_templet[][9], char new_templet[]
 		strcpy(old_templet[i], new_templet[i]);
 }
 
-//打印数独终局到文件file_name中。se为数列，templet为模板。
-void transform_into_sudo(int* se, char templet[][9], int sudo[][9])
+
+//由模板和数列转化为数独终局。se为数列，templet为模板。
+void transform_into_sudo(int* se, char templet[][9], char sudo[][18])
 {
 	for (int i = 0; i < 9; i++)
 	{
 		for (int j = 0; j < 9; j++)
 		{
-			sudo[i][j] = se[templet[i][j] - 'a'];
+			sudo[i][j] = se[templet[i][j] - 'a'] + '0';
 		}
+
+		for (int k = 1; k < 15; k = k + 2)
+			sudo[i][k] = ' ';
+
+		sudo[i][17] = '\n';
 	}
 }
 
@@ -287,10 +312,10 @@ void generate_sudoku(int n, char* file_name)
 			int se[9] = { 0 };
 			generate_sequence(new_templet[0][0], se);//生成一个新数列
 
-			int sudo[9][9];
+			char sudo[9][18];
 			transform_into_sudo(se, new_templet, sudo);
 
-			print_sudoku(file_name, sudo);//打印到文件
+			//g_print_sudoku(file_name, sudo);//打印到文件
 
 			sudo_sum++;
 			if (sudo_sum == n)//判断生成的终局数是否已达到要求
@@ -299,19 +324,20 @@ void generate_sudoku(int n, char* file_name)
 	}
 }
 
+
 //从endgame_filename中读取终局，转化为题目写入problem_filename
-void generate_problem(char* endgame_filename, char* problem_filename)
+int generate_problem(char* endgame_filename, char* problem_filename)
 {
 	FILE *fp1;
-	if((fp1 = fopen(endgame_filename, "r")) == NULL)
-		return;
+	if ((fp1 = fopen(endgame_filename, "r")) == NULL)
+		return -1;
 
 	clear_file(problem_filename);//清理记录数独题目的文件
 
 	FILE *fp2;
 	fp2 = fopen(problem_filename, "a+");
-	
 
+	int sudoku_sum = 0;
 	int sudo[9][9] = { 0 };
 	while (1)
 	{
@@ -327,7 +353,7 @@ void generate_problem(char* endgame_filename, char* problem_filename)
 					{
 						fclose(fp1);
 						fclose(fp2);
-						return;
+						return sudoku_sum;
 					}
 
 				} while (tem<'0' || tem>'9');
@@ -352,7 +378,9 @@ void generate_problem(char* endgame_filename, char* problem_filename)
 			sudo[x][y] = 0;
 		}
 
-		print_sudoku(problem_filename, sudo);
+		s_print_sudoku(problem_filename, sudo);
+
+		sudoku_sum++;
 	}
 
 	fclose(fp1);
@@ -390,10 +418,10 @@ int is_right(char* filename)
 						if (check_result == 1)
 						{
 							printf("检查完毕，无误\n");
-							return 1;
+							return order_number;
 						}
 						else
-							return 0;
+							return order_number;
 					}
 
 				} while (tem<'0' || tem>'9');
