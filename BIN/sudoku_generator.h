@@ -134,6 +134,7 @@ void generate_sudoku(int n, char* file_name)
 
 			//利用模板和数列，转化为终局并输出
 			char sudo[10][18] = { 0 };
+			char sudo_string[163] = { 0 };
 			for (int i = 0; i < 10; i++)
 			{
 				if (i != 9)
@@ -157,10 +158,10 @@ void generate_sudoku(int n, char* file_name)
 					else
 						sudo[9][0] = '\n';
 				}
-
-				fputs(sudo[i], fp);
+				strcat(sudo_string, sudo[i]);
+				//fputs(sudo[i], fp);
 			}
-
+			fputs(sudo_string, fp);
 
 
 
