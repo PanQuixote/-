@@ -3,12 +3,15 @@
 #include <time.h>
 #include<string.h>
 #include<math.h>
-#include"sudoku_function.h"
+
+#include"sudoku_generator.h"
+#include"sudoku_solve.h"
+#include"sudoku_check.h"
 
 
 int main(int argc, char *argv[])
 {
-	//判断接下来将要执行的命令
+	//鍒ゆ柇鎺ヤ笅鏉ュ皢瑕佹墽琛岀殑鍛戒护
 	char order[10] = { 0 };
 	strcpy(order, argv[1]);
 	switch (order[1])
@@ -18,23 +21,23 @@ int main(int argc, char *argv[])
 			int n = transform_into_int(argv[2]);
 			if (n == -1)
 			{
-				printf("输入了错误的参数\n");
+				printf("杈撳叆浜嗛敊璇殑鍙傛暟\n");
 				return 1;
 			}
 			else
 			{
-				generate_sudoku(n, "endgame.txt");//生成n个数独终局并打印到endgame
+				generate_sudoku(n, "endgame.txt");//鐢熸垚n涓暟鐙粓灞�骞舵墦鍗板埌endgame
 			}
 		}; break;
 
 		case 's':
 		{
-			solve_problem(argv[2], "sudoku.txt");//解决argv[2]文件中的数独题目并输出到sudoku.txt
+			solve_problem(argv[2], "sudoku.txt");//瑙ｅ喅argv[2]鏂囦欢涓殑鏁扮嫭棰樼洰骞惰緭鍑哄埌sudoku.txt
 		}; break;
 
 		case 'x':
 		{
-			generate_problem("endgame.txt", argv[2]);//将endgame中的终局转化为题目，输出到argv[2]
+			generate_problem("endgame.txt", argv[2]);//灏唀ndgame涓殑缁堝眬杞寲涓洪鐩紝杈撳嚭鍒癮rgv[2]
 		}; break;
 
 		case 'y':
@@ -44,7 +47,7 @@ int main(int argc, char *argv[])
 
 		default:
 		{
-			printf("输入了错误的参数\n");
+			printf("杈撳叆浜嗛敊璇殑鍙傛暟\n");
 			return 1;
 		};break;
 			
