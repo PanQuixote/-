@@ -7,10 +7,6 @@
 
 using namespace std;
 
-//修改了生成数独终局的算法。
-//由于是初版，存在模块化和优化的问题。后续将继续修改。
-//生成100万个终局需要2.6~2.9秒左右。
-
 
 //清除文件内的内容
 void g_clear_file(char* file_name)
@@ -21,18 +17,20 @@ void g_clear_file(char* file_name)
 	fclose(fp);
 }
 
-int change_way[31][9] = {
+//记录移动的方式。每行记录生成一个数独时需要进行的操作。
+//例如，第一行 0,3,6,1,4,7,2,5,8 表示，数独第一行由数列se向右移动0位得到；数独第二行由se向右移动3位得到……
+//此数组共有30行，代表通过一个数列可以获得30个数独。
+int move_way[30][9] = {
 	{ 0,3,6,1,4,7,2,5,8 },
-
 	{ 0,3,6,1,7,4,2,5,8 },
 	{ 0,3,6,4,1,7,2,5,8 },
 	{ 0,3,6,4,7,1,2,5,8 },
-	{ 0,3,6,7,4,1,2,5,8 },
 	{ 0,3,6,7,1,4,2,5,8 },
+
 
 	{ 0,3,6,1,4,7,2,8,5 },
 	{ 0,3,6,1,4,7,5,2,8 },
-	{ 0,3,6,1,4,7,5,2,2 },
+	{ 0,3,6,1,4,7,5,8,2 },
 	{ 0,3,6,1,4,7,8,2,5 },
 	{ 0,3,6,1,4,7,8,5,2 },
 
@@ -42,15 +40,16 @@ int change_way[31][9] = {
 	{ 0,3,6,7,4,1,8,2,5 },
 	{ 0,3,6,7,1,4,8,5,2 },
 
+	{ 0,6,3,1,4,7,2,5,8 },
 	{ 0,6,3,1,7,4,2,5,8 },
 	{ 0,6,3,4,1,7,2,5,8 },
 	{ 0,6,3,4,7,1,2,5,8 },
-	{ 0,6,3,7,4,1,2,5,8 },
 	{ 0,6,3,7,1,4,2,5,8 },
+
 
 	{ 0,6,3,1,4,7,2,8,5 },
 	{ 0,6,3,1,4,7,5,2,8 },
-	{ 0,6,3,1,4,7,5,2,2 },
+	{ 0,6,3,1,4,7,5,8,2 },
 	{ 0,6,3,1,4,7,8,2,5 },
 	{ 0,6,3,1,4,7,8,5,2 },
 
@@ -61,7 +60,8 @@ int change_way[31][9] = {
 	{ 0,6,3,7,1,4,8,5,2 },
 };
 
-void move_se(char* se, char* result, int n)//将数列se向右移动m位，移动后的结果存入result
+//将数列se向右移动m位，移动后的结果存入result
+void move_se(char* se, char* result, int n)
 {
 	for (int i = 0; i < n; i++)
 		result[i] = se[9 - n + i];
@@ -70,7 +70,22 @@ void move_se(char* se, char* result, int n)//将数列se向右移动m位，移�
 		result[i] = se[i - n];
 }
 
-//生成n个数独终局到文件file_name中。
+//将数列se转化成符合要求的格式，存储在se_string
+void se_change_into_string(char* se, char* se_string)
+{
+	for (int x = 0; x < 9; x++)
+	{
+		se_string[x * 2] = se[x];
+
+		if (x != 8)
+			se_string[x * 2 + 1] = ' ';
+		else
+			se_string[x * 2 + 1] = '\n';
+	}
+	se_string[18] = '\0';
+}
+
+//生成N个数独终局到文件file_name中。
 void generate_sudoku(int N, char* file_name)
 {
 	//清空文件内容
@@ -79,62 +94,48 @@ void generate_sudoku(int N, char* file_name)
 	FILE *fp;
 	fp = fopen(file_name, "a+");//以追加方式写入
 
-	//学号后两位为5、5，(5+5)%9+1=2，首位为2
-	char se[9] = {'2','1','3','4','5','6','7','8','9' };
-	char copy[9] = { 0 };
+	
+	char se[9] = {'2','1','3','4','5','6','7','8','9' };//学号后两位为5、5，(5+5)%9+1=2，所以数列首位为2
+	char copy[9] = { 0 };//数列的副本。记录数列移动后的结果。
 
-	int sudoku_sum = 0;
-	int change_sum = N / 40000 + 1;
-	while (1)
+	int sudoku_sum = 0;//已生成的数独终局数
+	int change_sum = N / 30 + 1;//将要生成的全排列数。
+
+	for (int i = 1; i <= change_sum; i++)//进行change_sum次全排列，生成change_sum个数列
 	{
-		for (int i = 1; i <= 40000; i++)
+		next_permutation(&se[1], &se[1] + 8);//对se的第二位到第九位进行全排列变换
+
+		for (int j = 0; j < 30; j++)//对每个数列，生成30个数独
 		{
-			next_permutation(&se[1], &se[1] + 8);
+			char sudoku_string[18 * 9 + 1] = { 0 };//数独的字符串形式
+			char se_string[18 + 1] = { 0 };//一行数独的字符串形式
 
-			for (int j = 0; j < change_sum; j++)
+			for (int k = 0; k < 9; k++)
 			{
-				char sudoku_string[18 * 9 + 1] = { 0 };
-				char se_string[18 + 1] = { 0 };
-
-				for (int k = 0; k < 9; k++)
-				{
-					move_se(se, copy, change_way[j][k]);
+				move_se(se, copy, move_way[j][k]);//按照移动表来移动数列se，移动后的结果存在copy
 					
-					for (int x = 0; x < 9; x++)
-					{
-						se_string[x * 2] = copy[x];
+				se_change_into_string(copy, se_string);//将copy转化为符合格式的字符串
 
-						if (x != 8)
-							se_string[x * 2 + 1] = ' ';
-						else
-							se_string[x * 2 + 1] = '\n';
-					}
-					se_string[18] = '\0';
-
-					strcat(sudoku_string, se_string);
-				}
-
-				sudoku_sum++;
-
-				if (sudoku_sum != N)
-					sudoku_string[18 * 9] = '\n';
-
-				fputs(sudoku_string, fp);
-
-				if (sudoku_sum == N)
-				{
-					fclose(fp);
-					return;
-				}
+				strcat(sudoku_string, se_string);//将copy拼接到数独终局字符串中
 			}
 
+			sudoku_sum++;
+
+			if (sudoku_sum != N)
+				sudoku_string[18 * 9] = '\n';
+
+			fputs(sudoku_string, fp);//输出数独终局字符串到文件
+
+			if (sudoku_sum == N)//已生成足够数目的终局
+			{
+				fclose(fp);
+				return;
+			}
 		}
 
 	}
 
 }
-
-
 
 //从endgame_filename中读取终局，转化为题目写入problem_filename
 int generate_problem(char* endgame_filename, char* problem_filename)
@@ -190,31 +191,28 @@ int generate_problem(char* endgame_filename, char* problem_filename)
 			sudo[x][y] = 0;
 		}
 
+		char sudoku_string[18 * 9 + 1] = { 0 };//数独的字符串形式
+		char se_string[18 + 1] = { 0 };//一行数独的字符串形式
 
-		char c_sudo[10][18] = { 0 };
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 9; i++)
 		{
-			if (i != 9)
+			for (int j = 0; j < 9; j++)
 			{
-				for (int j = 0; j < 9; j++)
-				{
-					c_sudo[i][j * 2] = sudo[i][j] + '0';
+				se_string[j * 2] = sudo[i][j] + '0';
 
-					sudo[i][j * 2 + 1] = ' ';
+				se_string[j * 2 + 1] = ' ';
 
-					if (j != 8)
-						sudo[i][j * 2 + 1] = ' ';
-					else
-						sudo[i][j * 2 + 1] = '\n';
-				}
+				if (j != 8)
+					se_string[j * 2 + 1] = ' ';
+				else
+					se_string[j * 2 + 1] = '\n';
 			}
-			else
-			{
-				sudo[9][0] = '\n';
-			}
-
-			fputs(c_sudo[i], fp2);
+			se_string[18] = '\0';
+			
+			strcat(sudoku_string, se_string);//将copy拼接到数独终局中
 		}
+		sudoku_string[18 * 9] = '\n';
+		fputs(sudoku_string, fp2);
 
 
 		sudoku_sum++;
