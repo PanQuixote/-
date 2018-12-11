@@ -99,20 +99,19 @@ void generate_sudoku(int N, char* file_name)
 	char copy[9] = { 0 };//数列的副本。记录数列移动后的结果。
 
 	int sudoku_sum = 0;//已生成的数独终局数
-	int change_sum = N / 30 + 1;//将要生成的全排列数。
 
-	for (int i = 1; i <= change_sum; i++)//进行change_sum次全排列，生成change_sum个数列
+	while (1)
 	{
-		next_permutation(&se[1], &se[1] + 8);//对se的第二位到第九位进行全排列变换
+		next_permutation(&se[1], &se[1] + 8);//对se的第二位到第九位进行全排列变换，得到一个新数列
 
-		for (int j = 0; j < 30; j++)//对每个数列，生成30个数独
+		for (int i = 0; i < 30; i++)//对每个数列，生成30个数独
 		{
 			char sudoku_string[18 * 9 + 1] = { 0 };//数独的字符串形式
 			char se_string[18 + 1] = { 0 };//一行数独的字符串形式
 
-			for (int k = 0; k < 9; k++)
+			for (int j = 0; j < 9; j++)
 			{
-				move_se(se, copy, move_way[j][k]);//按照移动表来移动数列se，移动后的结果存在copy
+				move_se(se, copy, move_way[i][j]);//按照移动表来移动数列se，移动后的结果存在copy
 					
 				se_change_into_string(copy, se_string);//将copy转化为符合格式的字符串
 
