@@ -4,16 +4,19 @@
 #include<string.h>
 #include<math.h>
 
-//ÅĞ¶ÏÔÚsudo[x][y]ÉÏ·ÅÖÃÊı×ÖnumÊÇ·ñ·ûºÏ¹æÔò£¬ÊÇÔò·µ»Ø1£¬·ñÔò·µ»Ø0
+//åˆ¤æ–­åœ¨sudo[x][y]ä¸Šæ”¾ç½®æ•°å­—numæ˜¯å¦ç¬¦åˆè§„åˆ™ï¼Œæ˜¯åˆ™è¿”å›1ï¼Œå¦åˆ™è¿”å›0
 int c_is_suit(int sudo[][9], int x, int y, int num)
 {
-	for (int k = 0; k < 9; k++)//ÅĞ¶Ïµ±Ç°µÄĞĞ»òÕßÁĞÓĞÃ»ÓĞÏàÍ¬µÄÊı×Ö
+	if (sudo[x][y] <= 0 || sudo[x][y] > 9)
+		return 0;
+
+	for (int k = 0; k < 9; k++)//åˆ¤æ–­å½“å‰çš„è¡Œæˆ–è€…åˆ—æœ‰æ²¡æœ‰ç›¸åŒçš„æ•°å­—
 	{
 		if ((k != y &&sudo[x][k] == num) || (k != x && sudo[k][y] == num))
 			return 0;
 	}
 
-	//ÅĞ¶Ïµ±Ç°µÄ¹¬ÊÇ·ñÓĞÏàÍ¬µÄÊı×Ö
+	//åˆ¤æ–­å½“å‰çš„å®«æ˜¯å¦æœ‰ç›¸åŒçš„æ•°å­—
 	for (int i = 3 * (x / 3); i < 3 * (x / 3) + 3; i++)
 	{
 		for (int j = 3 * (y / 3); j < 3 * (y / 3) + 3; j++)
@@ -26,23 +29,23 @@ int c_is_suit(int sudo[][9], int x, int y, int num)
 	return 1;
 }
 
-//¼ì²âÎÄ¼şfilenameÖĞµÄÊı¶ÀÊÇ·ñÕıÈ·£¬²¢´òÓ¡½á¹û
+
+//æ£€æµ‹æ–‡ä»¶filenameä¸­çš„æ•°ç‹¬æ˜¯å¦æ­£ç¡®ï¼Œå¹¶æ‰“å°ç»“æœ
 int is_right(char* filename)
 {
 	FILE *fp;
 	fp = fopen(filename, "r");
-	if (fp == NULL)//´ò¿ªÎÄ¼şÊ§°Ü
+	if (fp == NULL)//æ‰“å¼€æ–‡ä»¶å¤±è´¥
 		return -1;
 
-	int check_result = 0;//Õû¸öÎÄ¼şµÄ¼ì²é½á¹û£¬ÍêÈ«ÎŞÎóÔòÎª0£¬·ñÔòÎª´íÎóµÄÊı¶ÀÊı
-	int order_number = 0;//µ±Ç°¼ì²éµÄÊı¶ÀµÄ±àºÅ
+	int check_result = 0;//æ•´ä¸ªæ–‡ä»¶çš„æ£€æŸ¥ç»“æœï¼Œå®Œå…¨æ— è¯¯åˆ™ä¸º0ï¼Œå¦åˆ™ä¸ºé”™è¯¯çš„æ•°ç‹¬æ•°
+	int order_number = 0;//å½“å‰æ£€æŸ¥çš„æ•°ç‹¬çš„ç¼–å·
 	while (1)
 	{
-		int now_right = 1;//µ±Ç°Êı¶ÀµÄ¼ì²é½á¹û£¬ÕıÈ·Îª1£¬´íÎóÎª0
-		int error_cow = 0, error_col = 0;//·¢ÏÖµÄ´íÎóÔªËØµÄĞĞºÅºÍÁĞºÅ
+
 
 		int sudo[9][9] = { 0 };
-		//»ñÈ¡81¸öÊı£¬Èç¹ûÎ´×ã81¸öÊı¾ÍÒÑ¶Áµ½ÎÄ¼şÎ²£¬ÔòÍË³ö£¬·µ»Ø0
+		//è·å–81ä¸ªæ•°ï¼Œå¦‚æœæœªè¶³81ä¸ªæ•°å°±å·²è¯»åˆ°æ–‡ä»¶å°¾ï¼Œåˆ™é€€å‡ºï¼Œè¿”å›0
 		for (int i = 0; i < 9; i++)
 		{
 			for (int j = 0; j < 9; j++)
@@ -50,17 +53,17 @@ int is_right(char* filename)
 				char tem;
 				do
 				{
-					if (fscanf(fp, "%c", &tem) == -1)//¶Áµ½ÎÄ¼şÎ²
+					if (fscanf(fp, "%c", &tem) == -1)//è¯»åˆ°æ–‡ä»¶å°¾
 					{
 						fclose(fp);
 
 						if (check_result == 0)
 						{
-							printf("¼ì²éÍê±Ï£¬ÎŞÎó\n");
+							printf("æ£€æŸ¥å®Œæ¯•ï¼Œæ— è¯¯\n");
 						}
 						else
 						{
-							printf("¹²ÓĞ %d ¸öÊı¶À´íÎó\n", check_result);
+							printf("å…±æœ‰ %d ä¸ªæ•°ç‹¬é”™è¯¯\n", check_result);
 						}
 
 							return order_number;
@@ -74,18 +77,19 @@ int is_right(char* filename)
 		}
 
 		order_number++;
-
+		int now_right = 1;//å½“å‰æ•°ç‹¬çš„æ£€æŸ¥ç»“æœï¼Œæ­£ç¡®ä¸º1ï¼Œé”™è¯¯ä¸º0
+		int error_cow = 0, error_col = 0;//å‘ç°çš„é”™è¯¯å…ƒç´ çš„è¡Œå·å’Œåˆ—å·
 		for (int i = 0; i < 9; i++)
 		{
 			for (int j = 0; j < 9; j++)
 			{
-				if (now_right == 1 && (sudo[i][j] == 0 || c_is_suit(sudo, i, j, sudo[i][j]) != 1))
+				if (c_is_suit(sudo, i, j, sudo[i][j]) != 1)//å‘ç°é”™è¯¯
 				{
 					check_result++;
 					now_right = 0;
 					error_cow = i + 1;
 					error_col = j + 1;
-					printf("µÚ %d ºÅÊı¶À£¨%d, %d£©ÓĞÎó\n", order_number, error_cow, error_col);
+					printf("ç¬¬ %d å·æ•°ç‹¬ï¼ˆ%d, %dï¼‰æœ‰è¯¯\n", order_number, error_cow, error_col);
 					break;
 				}
 			}
