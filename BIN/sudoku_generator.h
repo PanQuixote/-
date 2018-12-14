@@ -12,7 +12,12 @@ using namespace std;
 void g_clear_file(char* file_name)
 {
 	FILE *fp;
-	fp = fopen(file_name, "w");
+	errno_t open_error = fopen_s(&fp, file_name, "w");//打开成功返回非零，失败返回0
+	if (open_error)
+	{
+		printf("打开文件 %s 失败\n", file_name);
+		return;
+	}
 
 	fclose(fp);
 }
@@ -92,7 +97,13 @@ void generate_sudoku(int N, char* file_name)
 	g_clear_file(file_name);
 
 	FILE *fp;
-	fp = fopen(file_name, "a+");//以追加方式写入
+	errno_t open_error = fopen_s(&fp, file_name, "a+");//打开成功返回非零，失败返回0
+	if (open_error)
+	{
+		printf("打开文件 %s 失败\n", file_name);
+		return;
+	}
+	//fp = fopen(file_name, "a+");//以追加方式写入
 
 	
 	char se[9] = {'2','1','3','4','5','6','7','8','9' };//学号后两位为5、5，(5+5)%9+1=2，所以数列首位为2
@@ -115,7 +126,7 @@ void generate_sudoku(int N, char* file_name)
 					
 				se_change_into_string(copy, se_string);//将copy转化为符合格式的字符串
 
-				strcat(sudoku_string, se_string);//将copy拼接到数独终局字符串中
+				strcat_s(sudoku_string, se_string);//将copy拼接到数独终局字符串中
 			}
 
 			sudoku_sum++;
@@ -140,12 +151,21 @@ void generate_sudoku(int N, char* file_name)
 int generate_problem(char* endgame_filename, char* problem_filename)
 {
 	FILE *fp1;
-	if ((fp1 = fopen(endgame_filename, "r")) == NULL)
+	errno_t open_error = fopen_s(&fp1, endgame_filename, "r");//打开成功返回非零，失败返回0
+	if (open_error)
+	{
+		printf("打开文件 %s 失败\n", endgame_filename);
 		return -1;
+	}
 
 	g_clear_file(problem_filename);//清理记录数独题目的文件
 	FILE *fp2;
-	fp2 = fopen(problem_filename, "a+");
+	open_error = fopen_s(&fp2, problem_filename, "a+");//打开成功返回非零，失败返回0
+	if (open_error)
+	{
+		printf("打开文件 %s 失败\n", problem_filename);
+		return -1;
+	}
 
 	int sudoku_sum = 0;
 
@@ -160,7 +180,7 @@ int generate_problem(char* endgame_filename, char* problem_filename)
 				char tem;
 				do
 				{
-					if (fscanf(fp1, "%c", &tem) == -1)//读到文件尾
+					if (fscanf_s(fp1, "%c", &tem, 1) == -1)//读到文件尾
 					{
 						fclose(fp1);
 						fclose(fp2);
@@ -208,7 +228,7 @@ int generate_problem(char* endgame_filename, char* problem_filename)
 			}
 			se_string[18] = '\0';
 			
-			strcat(sudoku_string, se_string);//将copy拼接到数独终局中
+			strcat_s(sudoku_string, se_string);//将copy拼接到数独终局中
 		}
 		sudoku_string[18 * 9] = '\n';
 		fputs(sudoku_string, fp2);
