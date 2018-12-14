@@ -10,7 +10,13 @@
 void s_clear_file(char* file_name)
 {
 	FILE *fp;
-	fp = fopen(file_name, "w");
+	//fp = fopen(file_name, "w");
+	errno_t open_error = fopen_s(&fp, file_name, "w");//打开成功返回非零，失败返回0
+	if (open_error)
+	{
+		printf("打开文件 %s 失败\n", file_name);
+		return;
+	}
 
 	fclose(fp);
 }
@@ -87,13 +93,21 @@ void place_num(int sudo[][9], int pos, int num, int result[][9])
 int solve_problem(char* problem_filename, char* result_filename)
 {
 	FILE *fp1;
-	fp1 = fopen(problem_filename, "r");
-	if (fp1 == NULL)//打开记录数独问题的文件失败
+	errno_t open_error = fopen_s(&fp1, problem_filename, "r");//打开成功返回非零，失败返回0
+	if (open_error)
+	{
+		printf("打开文件 %s 失败\n", problem_filename);
 		return -1;
+	}
 
 	s_clear_file(result_filename);//清空记录结果的文件
 	FILE *fp2;
-	fp2 = fopen(result_filename, "a+");
+	open_error = fopen_s(&fp2, result_filename, "a+");//打开成功返回非零，失败返回0
+	if (open_error)
+	{
+		printf("打开文件 %s 失败\n", result_filename);
+		return -1;
+	}
 
 	int sudoku_sum = 0;
 	while (1)
@@ -107,7 +121,7 @@ int solve_problem(char* problem_filename, char* result_filename)
 				char tem;
 				do
 				{
-					if (fscanf(fp1, "%c", &tem) == -1)//读到文件尾
+					if (fscanf_s(fp1, "%c", &tem, 1) == -1)//读到文件尾
 					{
 						fclose(fp1);
 						fclose(fp2);
@@ -141,7 +155,7 @@ int solve_problem(char* problem_filename, char* result_filename)
 			}
 			se_string[18] = '\0';
 
-			strcat(sudoku_string, se_string);//将copy拼接到数独终局中
+			strcat_s(sudoku_string, se_string);//将copy拼接到数独终局中
 		}
 		sudoku_string[18 * 9] = '\n';
 		fputs(sudoku_string, fp2);
