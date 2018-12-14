@@ -34,9 +34,12 @@ int c_is_suit(int sudo[][9], int x, int y, int num)
 int is_right(char* filename)
 {
 	FILE *fp;
-	fp = fopen(filename, "r");
-	if (fp == NULL)//打开文件失败
+	errno_t open_error = fopen_s(&fp, filename, "r");//打开成功返回非零，失败返回0
+	if (open_error)
+	{
+		printf("打开文件 %s 失败\n", filename);
 		return -1;
+	}
 
 	int check_result = 0;//整个文件的检查结果，完全无误则为0，否则为错误的数独数
 	int order_number = 0;//当前检查的数独的编号
@@ -53,7 +56,7 @@ int is_right(char* filename)
 				char tem;
 				do
 				{
-					if (fscanf(fp, "%c", &tem) == -1)//读到文件尾
+					if (fscanf_s(fp, "%c", &tem, 1) == -1)//读到文件尾
 					{
 						fclose(fp);
 
