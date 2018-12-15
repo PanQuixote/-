@@ -134,12 +134,26 @@ int solve_problem(char* problem_filename, char* result_filename)
 			}
 		}
 
+		sudoku_sum++;
+
 		int result[9][9] = { 0 };
 		place_num(sudo, -1, 0, result);
+		//检测是否已解出
+		for (int i = 0; i < 9; i++)
+		{
+			for (int j = 0; j < 9; j++)
+			{
+				if (result[i][j] <= 0 || result[i][j] > 9)
+				{
+					printf("第 %d 道数独题无解\n", sudoku_sum);
+					continue;
+				}
+			}
+		}
 
+		//将整个数独转化成一个字符串
 		char sudoku_string[18 * 9 + 1] = { 0 };//数独的字符串形式
 		char se_string[18 + 1] = { 0 };//一行数独的字符串形式
-
 		for (int i = 0; i < 9; i++)
 		{
 			for (int j = 0; j < 9; j++)
@@ -158,9 +172,9 @@ int solve_problem(char* problem_filename, char* result_filename)
 			strcat_s(sudoku_string, se_string);//将copy拼接到数独终局中
 		}
 		sudoku_string[18 * 9] = '\n';
-		fputs(sudoku_string, fp2);
 
-		sudoku_sum++;
+		fputs(sudoku_string, fp2);//输出到文件
+
 
 	}
 }
