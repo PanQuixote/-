@@ -105,8 +105,8 @@ void generate_sudoku(int N, char* file_name)
 	}
 	//fp = fopen(file_name, "a+");//以追加方式写入
 
-	
-	char se[9] = {'2','1','3','4','5','6','7','8','9' };//学号后两位为5、5，(5+5)%9+1=2，所以数列首位为2
+
+	char se[9] = { '2','1','3','4','5','6','7','8','9' };//学号后两位为5、5，(5+5)%9+1=2，所以数列首位为2
 	char copy[9] = { 0 };//数列的副本。记录数列移动后的结果。
 
 	int sudoku_sum = 0;//已生成的数独终局数
@@ -123,7 +123,7 @@ void generate_sudoku(int N, char* file_name)
 			for (int j = 0; j < 9; j++)
 			{
 				move_se(se, copy, move_way[i][j]);//按照移动表来移动数列se，移动后的结果存在copy
-					
+
 				se_change_into_string(copy, se_string);//将copy转化为符合格式的字符串
 
 				strcat_s(sudoku_string, se_string);//将copy拼接到数独终局字符串中
@@ -147,96 +147,98 @@ void generate_sudoku(int N, char* file_name)
 
 }
 
-//从endgame_filename中读取终局，转化为题目写入problem_filename
-int generate_problem(char* endgame_filename, char* problem_filename)
+//把终局sudoku转化为题目,存在problem
+void change_into_problem(const char sudoku[][9], char problem[][9])
 {
-	FILE *fp1;
-	errno_t open_error = fopen_s(&fp1, endgame_filename, "r");//打开成功返回非零，失败返回0
+
+	for (int x = 0; x < 9; x++)
+		for (int y = 0; y < 9; y++)
+			problem[x][y] = sudoku[x][y];
+
+	srand((unsigned int)(time(NULL)));
+	int blank_sum = rand() % 3 + 4;//每个宫的空白数，范围[4,6]
+
+	for (int x = 0; x <= 2; x++)
+	{
+		for (int y = 0; y <= 2; y++)
+		{
+			int is_exit[9] = { 0 };
+			int pos;
+			for (int t = 1; t <= blank_sum; t++)
+			{
+				do
+				{
+					pos = rand() % 9;
+				} while (is_exit[pos] == 1);
+
+				is_exit[pos] = 1;
+
+				int row = x * 3 + pos / 3;
+				int col = y * 3 + pos % 3;
+
+				problem[row][col] = '0';
+			}
+		}
+	}
+}
+
+//生成N个数独题到文件file_name中，如果生成失败返回0，否则返回N
+int generate_problem(int N, char* file_name)
+{
+	//清空文件内容
+	g_clear_file(file_name);
+
+	FILE *fp;
+	errno_t open_error = fopen_s(&fp, file_name, "a+");//打开成功返回非零，失败返回0
 	if (open_error)
 	{
-		printf("打开文件 %s 失败\n", endgame_filename);
-		return -1;
+		printf("打开文件 %s 失败\n", file_name);
+		return 0;
 	}
 
-	g_clear_file(problem_filename);//清理记录数独题目的文件
-	FILE *fp2;
-	open_error = fopen_s(&fp2, problem_filename, "a+");//打开成功返回非零，失败返回0
-	if (open_error)
-	{
-		printf("打开文件 %s 失败\n", problem_filename);
-		return -1;
-	}
+	char se[9] = { '2','1','3','4','5','6','7','8','9' };//学号后两位为5、5，(5+5)%9+1=2，所以数列首位为2
+	char copy[9][9] = { 0 };//数列的副本。记录数列移动后的结果。
 
-	int sudoku_sum = 0;
+	int problem_sum = 0;//已生成的数独终局数
 
 	while (1)
 	{
-		int sudo[9][9] = { 0 };
-		//获取81个数，如果未足81个数就已读到文件尾，则退出
-		for (int i = 0; i < 9; i++)
+		next_permutation(&se[1], &se[1] + 8);//对se的第二位到第九位进行全排列变换，得到一个新数列
+
+		for (int i = 0; i < 30; i++)//对每个数列，生成30个数独
 		{
+			char sudoku_string[18 * 9 + 1] = { 0 };//数独的字符串形式
+			char se_string[18 + 1] = { 0 };//一行数独的字符串形式
+
 			for (int j = 0; j < 9; j++)
 			{
-				char tem;
-				do
-				{
-					if (fscanf_s(fp1, "%c", &tem, 1) == -1)//读到文件尾
-					{
-						fclose(fp1);
-						fclose(fp2);
-						return sudoku_sum;
-					}
-
-				} while (tem<'0' || tem>'9');
-
-				sudo[i][j] = tem - '0';
+				move_se(se, copy[j], move_way[i][j]);//按照移动表来移动数列se，移动后的结果存在copy
 			}
-		}
 
-		//随机挖空
-		srand((unsigned)time(NULL));
-		int blank = rand() % 31 + 30;//将要挖空的数量
-		while (blank--)
-		{
-			int place = rand() % 81;
-			int x = place / 9;
-			int y = place % 9;
-			while (sudo[x][y] == 0)
-			{
-				place = rand() % 81;
-				x = place / 9;
-				y = place % 9;
-			}
-			sudo[x][y] = 0;
-		}
+			change_into_problem(copy, copy);//将copy转化为数独题
 
-		char sudoku_string[18 * 9 + 1] = { 0 };//数独的字符串形式
-		char se_string[18 + 1] = { 0 };//一行数独的字符串形式
-
-		for (int i = 0; i < 9; i++)
-		{
 			for (int j = 0; j < 9; j++)
 			{
-				se_string[j * 2] = sudo[i][j] + '0';
+				se_change_into_string(copy[j], se_string);//将copy转化为符合格式的字符串
 
-				se_string[j * 2 + 1] = ' ';
-
-				if (j != 8)
-					se_string[j * 2 + 1] = ' ';
-				else
-					se_string[j * 2 + 1] = '\n';
+				strcat_s(sudoku_string, se_string);//将copy拼接到数独终局字符串中
 			}
-			se_string[18] = '\0';
-			
-			strcat_s(sudoku_string, se_string);//将copy拼接到数独终局中
+
+
+			problem_sum++;
+
+			if (problem_sum != N)
+				sudoku_string[18 * 9] = '\n';
+
+			fputs(sudoku_string, fp);//输出数独终局字符串到文件
+
+			if (problem_sum == N)//已生成足够数目的终局
+			{
+				fclose(fp);
+				return N;
+			}
 		}
-		sudoku_string[18 * 9] = '\n';
-		fputs(sudoku_string, fp2);
 
-
-		sudoku_sum++;
 	}
 
-	fclose(fp1);
-	fclose(fp2);
 }
