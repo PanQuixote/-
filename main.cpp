@@ -8,14 +8,14 @@
 #include"sudoku_solve.h"
 #include"sudoku_check.h"
 
-//å°†numè½¬åŒ–ä¸ºintï¼Œå¦‚æœä¸åˆæ³•ï¼Œè¿”å›-1
+//½«num×ª»¯Îªint£¬Èç¹û²»ºÏ·¨£¬·µ»Ø-1
 int transform_into_int(char* num)
 {
 	int n = 0;
 	char n_t[10] = { 0 };
 	strcpy_s(n_t, num);
 	int len = strlen(n_t);
-	for (int i = 0; i < len; i++)//å°†charæ•°ç»„è½¬åŒ–ä¸ºæ•°å­—ï¼Œå¦‚æœä¸ºä¸åˆæ³•çš„æ•°å­—åˆ™é€€å‡º
+	for (int i = 0; i < len; i++)//½«charÊı×é×ª»¯ÎªÊı×Ö£¬Èç¹ûÎª²»ºÏ·¨µÄÊı×ÖÔòÍË³ö
 	{
 		if (!(n_t[i] >= '0'&&n_t[i] <= '9'))
 		{
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 	clock_t start, finish;
 	double totaltime;
 
-	//åˆ¤æ–­æ¥ä¸‹æ¥å°†è¦æ‰§è¡Œçš„å‘½ä»¤
+	//ÅĞ¶Ï½ÓÏÂÀ´½«ÒªÖ´ĞĞµÄÃüÁî
 	char order[10] = { 0 };
 	strcpy_s(order, argv[1]);
 	switch (order[1])
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 			int n = transform_into_int(argv[2]);
 			if (n == -1)
 			{
-				printf("è¾“å…¥äº†é”™è¯¯çš„å‚æ•°\n");
+				printf("ÊäÈëÁË´íÎóµÄ²ÎÊı\n");
 				system("pause");
 
 				return 1;
@@ -55,9 +55,9 @@ int main(int argc, char *argv[])
 			{
 				start = clock();
 
-				generate_sudoku(n, "endgame.txt");//ç”Ÿæˆnä¸ªæ•°ç‹¬ç»ˆå±€å¹¶æ‰“å°åˆ°endgame
+				int N = generate_sudoku(n, "endgame.txt");//Éú³Én¸öÊı¶ÀÖÕ¾Ö²¢´òÓ¡µ½endgame
 
-				printf("ç”Ÿæˆäº† %d ä¸ªæ•°ç‹¬ç»ˆå±€\n", n);
+				printf("Éú³ÉÁË %d ¸öÊı¶ÀÖÕ¾Ö\n", N);
 			}
 		}; break;
 
@@ -65,9 +65,9 @@ int main(int argc, char *argv[])
 		{
 			start = clock();
 
-			int n = solve_problem(argv[2], "sudoku.txt");//è§£å†³argv[2]æ–‡ä»¶ä¸­çš„æ•°ç‹¬é¢˜ç›®å¹¶è¾“å‡ºåˆ°sudoku.txt
+			int n = solve_problem(argv[2], "sudoku.txt");//½â¾öargv[2]ÎÄ¼şÖĞµÄÊı¶ÀÌâÄ¿²¢Êä³öµ½sudoku.txt
 
-			printf("è§£å†³äº† %d é“æ•°ç‹¬é¢˜\n", n);
+			printf("½â¾öÁË %d µÀÊı¶ÀÌâ\n", n);
 		}; break;
 
 		case 'x':
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 			int N = transform_into_int(argv[2]);
 			if (N == -1)
 			{
-				printf("è¾“å…¥äº†é”™è¯¯çš„å‚æ•°\n");
+				printf("ÊäÈëÁË´íÎóµÄ²ÎÊı\n");
 				system("pause");
 
 				return 1;
@@ -84,9 +84,9 @@ int main(int argc, char *argv[])
 			{
 				start = clock();
 
-				int n = generate_problem(N, argv[3]);//ç”ŸæˆNä¸ªæ•°ç‹¬é¢˜å¹¶æ‰“å°åˆ°argv[3]
+				int n = generate_problem(N, argv[3]);//Éú³ÉN¸öÊı¶ÀÌâ²¢´òÓ¡µ½argv[3]
 
-				printf("ç”Ÿæˆäº† %d é“æ•°ç‹¬é¢˜\n", n);
+				printf("Éú³ÉÁË %d µÀÊı¶ÀÌâ\n", n);
 			}
 		}; break;
 
@@ -96,14 +96,14 @@ int main(int argc, char *argv[])
 
 			int n = is_right(argv[2]);
 
-			printf("æ£€æµ‹äº† %d ä¸ªæ•°ç‹¬ç»ˆå±€\n", n);		
+			printf("¼ì²âÁË %d ¸öÊı¶ÀÖÕ¾Ö\n", n);		
 		}; break;
 
 		default:
 		{
 			start = clock();
 
-			printf("è¾“å…¥äº†é”™è¯¯çš„å‚æ•°\n");
+			printf("ÊäÈëÁË´íÎóµÄ²ÎÊı\n");
 			system("pause");
 			return 1;
 		};break;
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
 	finish = clock();
 	totaltime = (double)(finish - start) / CLOCKS_PER_SEC;
 
-	printf("æ­¤ç¨‹åºçš„è¿è¡Œæ—¶é—´ä¸º %.3lf ç§’\n", totaltime);
+	printf("´Ë³ÌĞòµÄÔËĞĞÊ±¼äÎª %.3lf Ãë\n", totaltime);
 
 	system("pause");
 }

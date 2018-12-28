@@ -6,22 +6,22 @@
 
 
 
-//æ¸…é™¤æ–‡ä»¶å†…çš„å†…å®¹
+//Çå³ıÎÄ¼şÄÚµÄÄÚÈİ
 void s_clear_file(char* file_name)
 {
 	FILE *fp;
 	//fp = fopen(file_name, "w");
-	errno_t open_error = fopen_s(&fp, file_name, "w");//æ‰“å¼€æˆåŠŸè¿”å›éé›¶ï¼Œå¤±è´¥è¿”å›0
+	errno_t open_error = fopen_s(&fp, file_name, "w");//´ò¿ª³É¹¦·µ»Ø·ÇÁã£¬Ê§°Ü·µ»Ø0
 	if (open_error)
 	{
-		printf("æ‰“å¼€æ–‡ä»¶ %s å¤±è´¥\n", file_name);
+		printf("´ò¿ªÎÄ¼ş %s Ê§°Ü\n", file_name);
 		return;
 	}
 
 	fclose(fp);
 }
 
-//å°†old_sudoå¤åˆ¶åˆ°new_sudo
+//½«old_sudo¸´ÖÆµ½new_sudo
 void copy_sudo(int old_sudo[][9], int new_sudo[][9])
 {
 	for (int i = 0; i < 9; i++)
@@ -33,19 +33,19 @@ void copy_sudo(int old_sudo[][9], int new_sudo[][9])
 	}
 }
 
-//åˆ¤æ–­åœ¨sudo[x][y]ä¸Šæ”¾ç½®æ•°å­—numæ˜¯å¦ç¬¦åˆè§„åˆ™ï¼Œæ˜¯åˆ™è¿”å›1ï¼Œå¦åˆ™è¿”å›0
+//ÅĞ¶ÏÔÚsudo[x][y]ÉÏ·ÅÖÃÊı×ÖnumÊÇ·ñ·ûºÏ¹æÔò£¬ÊÇÔò·µ»Ø1£¬·ñÔò·µ»Ø0
 int s_is_suit(int sudo[][9], int pos, int num)
 {
 	int x = pos / 9;
 	int y = pos % 9;
 
-	for (int k = 0; k < 9; k++)//åˆ¤æ–­å½“å‰çš„è¡Œæˆ–è€…åˆ—æœ‰æ²¡æœ‰ç›¸åŒçš„æ•°å­—
+	for (int k = 0; k < 9; k++)//ÅĞ¶Ïµ±Ç°µÄĞĞ»òÕßÁĞÓĞÃ»ÓĞÏàÍ¬µÄÊı×Ö
 	{
 		if ((k != y && sudo[x][k] == num) || (k != x && sudo[k][y] == num))
 			return 0;
 	}
 
-	//åˆ¤æ–­å½“å‰çš„å®«æ˜¯å¦æœ‰ç›¸åŒçš„æ•°å­—
+	//ÅĞ¶Ïµ±Ç°µÄ¹¬ÊÇ·ñÓĞÏàÍ¬µÄÊı×Ö
 	for (int i = 3 * (x / 3); i < 3 * (x / 3) + 3; i++)
 	{
 		for (int j = 3 * (y / 3); j < 3 * (y / 3) + 3; j++)
@@ -58,30 +58,30 @@ int s_is_suit(int sudo[][9], int pos, int num)
 	return 1;
 }
 
-//é€’å½’ï¼Œå°†numæ”¾ç½®åˆ°ç©ºä½ç½®posï¼ˆ0~80ï¼‰ä¸Š,ç›´åˆ°æ‰€æœ‰çš„ç©ºä½ç½®è¢«å¡«æ»¡ï¼Œå¡«å¥½çš„æ•°ç‹¬å­˜åœ¨resultä¸­
+//µİ¹é£¬½«num·ÅÖÃµ½¿ÕÎ»ÖÃpos£¨0~80£©ÉÏ,Ö±µ½ËùÓĞµÄ¿ÕÎ»ÖÃ±»ÌîÂú£¬ÌîºÃµÄÊı¶À´æÔÚresultÖĞ
 void place_num(int sudo[][9], int pos, int num, int result[][9])
 {
 	int copy[9][9] = { 0 };
 	copy_sudo(sudo, copy);
 
-	if (pos >= 0)//å½“å‰ä½ç½®åˆæ³•ï¼Œå°†æ­¤ä½ç½®ç½®ä¸ºnum
+	if (pos >= 0)//µ±Ç°Î»ÖÃºÏ·¨£¬½«´ËÎ»ÖÃÖÃÎªnum
 		copy[pos / 9][pos % 9] = num;
 
-	//æ‰¾åˆ°ä¸‹ä¸€ä¸ªå¯¹åº”çš„æ•°å­—ä¸º0çš„ä½ç½®
+	//ÕÒµ½ÏÂÒ»¸ö¶ÔÓ¦µÄÊı×ÖÎª0µÄÎ»ÖÃ
 	do
 	{
 		pos++;
-		if (pos > 80)//å½“å‰æ•°ç‹¬å·²æ˜¯ç»ˆå±€
+		if (pos > 80)//µ±Ç°Êı¶ÀÒÑÊÇÖÕ¾Ö
 		{
 			copy_sudo(copy, result);
 			return;
 		}
 	} while (copy[pos / 9][pos % 9] != 0);
 
-	//å°è¯•å°†æ­¤ä½ç½®çš„ä¸‹ä¸€ä½ç½®ç½®ä¸ºnï¼Œnçš„èŒƒå›´æ˜¯1~9
+	//³¢ÊÔ½«´ËÎ»ÖÃµÄÏÂÒ»Î»ÖÃÖÃÎªn£¬nµÄ·¶Î§ÊÇ1~9
 	for (int n = 1; n <= 9; n++)
 	{
-		if (s_is_suit(copy, pos, n) == 1)//å¦‚æœå½“å‰ä½ç½®ç½®ä¸ºnåˆé€‚ï¼Œåˆ™é€’å½’è®¾ç½®ä¸‹ä¸€ä¸ªä¸º0çš„ä½ç½®
+		if (s_is_suit(copy, pos, n) == 1)//Èç¹ûµ±Ç°Î»ÖÃÖÃÎªnºÏÊÊ£¬Ôòµİ¹éÉèÖÃÏÂÒ»¸öÎª0µÄÎ»ÖÃ
 		{
 			place_num(copy, pos, n, result);
 		}
@@ -89,23 +89,23 @@ void place_num(int sudo[][9], int pos, int num, int result[][9])
 
 }
 
-//ä»problem_filenameä¸­è·å–æ•°ç‹¬å¹¶æ±‚è§£ï¼Œè¾“å…¥åˆ°result_filename
+//´Óproblem_filenameÖĞ»ñÈ¡Êı¶À²¢Çó½â£¬ÊäÈëµ½result_filename
 int solve_problem(char* problem_filename, char* result_filename)
 {
 	FILE *fp1;
-	errno_t open_error = fopen_s(&fp1, problem_filename, "r");//æ‰“å¼€æˆåŠŸè¿”å›éé›¶ï¼Œå¤±è´¥è¿”å›0
+	errno_t open_error = fopen_s(&fp1, problem_filename, "r");//´ò¿ª³É¹¦·µ»Ø·ÇÁã£¬Ê§°Ü·µ»Ø0
 	if (open_error)
 	{
-		printf("æ‰“å¼€æ–‡ä»¶ %s å¤±è´¥\n", problem_filename);
+		printf("´ò¿ªÎÄ¼ş %s Ê§°Ü\n", problem_filename);
 		return -1;
 	}
 
-	s_clear_file(result_filename);//æ¸…ç©ºè®°å½•ç»“æœçš„æ–‡ä»¶
+	s_clear_file(result_filename);//Çå¿Õ¼ÇÂ¼½á¹ûµÄÎÄ¼ş
 	FILE *fp2;
-	open_error = fopen_s(&fp2, result_filename, "a+");//æ‰“å¼€æˆåŠŸè¿”å›éé›¶ï¼Œå¤±è´¥è¿”å›0
+	open_error = fopen_s(&fp2, result_filename, "a+");//´ò¿ª³É¹¦·µ»Ø·ÇÁã£¬Ê§°Ü·µ»Ø0
 	if (open_error)
 	{
-		printf("æ‰“å¼€æ–‡ä»¶ %s å¤±è´¥\n", result_filename);
+		printf("´ò¿ªÎÄ¼ş %s Ê§°Ü\n", result_filename);
 		return -1;
 	}
 
@@ -113,7 +113,7 @@ int solve_problem(char* problem_filename, char* result_filename)
 	while (1)
 	{
 		int sudo[9][9] = { 0 };
-		//è·å–81ä¸ªæ•°ï¼Œå¦‚æœæœªè¶³81ä¸ªæ•°å°±å·²è¯»åˆ°æ–‡ä»¶å°¾ï¼Œåˆ™é€€å‡ºï¼Œè¿”å›0
+		//»ñÈ¡81¸öÊı£¬Èç¹ûÎ´×ã81¸öÊı¾ÍÒÑ¶Áµ½ÎÄ¼şÎ²£¬ÔòÍË³ö£¬·µ»Ø0
 		for (int i = 0; i < 9; i++)
 		{
 			for (int j = 0; j < 9; j++)
@@ -121,7 +121,7 @@ int solve_problem(char* problem_filename, char* result_filename)
 				char tem;
 				do
 				{
-					if (fscanf_s(fp1, "%c", &tem, 1) == -1)//è¯»åˆ°æ–‡ä»¶å°¾
+					if (fscanf_s(fp1, "%c", &tem, 1) == -1)//¶Áµ½ÎÄ¼şÎ²
 					{
 						fclose(fp1);
 						fclose(fp2);
@@ -138,22 +138,22 @@ int solve_problem(char* problem_filename, char* result_filename)
 
 		int result[9][9] = { 0 };
 		place_num(sudo, -1, 0, result);
-		//æ£€æµ‹æ˜¯å¦å·²è§£å‡º
+		//¼ì²âÊÇ·ñÒÑ½â³ö
 		for (int i = 0; i < 9; i++)
 		{
 			for (int j = 0; j < 9; j++)
 			{
 				if (result[i][j] <= 0 || result[i][j] > 9)
 				{
-					printf("ç¬¬ %d é“æ•°ç‹¬é¢˜æ— è§£\n", sudoku_sum);
+					printf("µÚ %d µÀÊı¶ÀÌâÎŞ½â\n", sudoku_sum);
 					continue;
 				}
 			}
 		}
 
-		//å°†æ•´ä¸ªæ•°ç‹¬è½¬åŒ–æˆä¸€ä¸ªå­—ç¬¦ä¸²
-		char sudoku_string[18 * 9 + 1] = { 0 };//æ•°ç‹¬çš„å­—ç¬¦ä¸²å½¢å¼
-		char se_string[18 + 1] = { 0 };//ä¸€è¡Œæ•°ç‹¬çš„å­—ç¬¦ä¸²å½¢å¼
+		//½«Õû¸öÊı¶À×ª»¯³ÉÒ»¸ö×Ö·û´®
+		char sudoku_string[18 * 9 + 1] = { 0 };//Êı¶ÀµÄ×Ö·û´®ĞÎÊ½
+		char se_string[18 + 1] = { 0 };//Ò»ĞĞÊı¶ÀµÄ×Ö·û´®ĞÎÊ½
 		for (int i = 0; i < 9; i++)
 		{
 			for (int j = 0; j < 9; j++)
@@ -169,12 +169,10 @@ int solve_problem(char* problem_filename, char* result_filename)
 			}
 			se_string[18] = '\0';
 
-			strcat_s(sudoku_string, se_string);//å°†copyæ‹¼æ¥åˆ°æ•°ç‹¬ç»ˆå±€ä¸­
+			strcat_s(sudoku_string, se_string);//½«copyÆ´½Óµ½Êı¶ÀÖÕ¾ÖÖĞ
 		}
 		sudoku_string[18 * 9] = '\n';
 
-		fputs(sudoku_string, fp2);//è¾“å‡ºåˆ°æ–‡ä»¶
-
-
+		fputs(sudoku_string, fp2);//Êä³öµ½ÎÄ¼ş
 	}
 }
