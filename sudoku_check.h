@@ -4,7 +4,7 @@
 #include<string.h>
 #include<math.h>
 
-//¼ì²ésudoÊÇ·ñ·ûºÏÒªÇó£¬·ûºÏ·µ»Ø-1£¬·ñÔò·µ»Ø´íÎóµÄÎ»ÖÃ
+//æ£€æŸ¥sudoæ˜¯å¦ç¬¦åˆè¦æ±‚ï¼Œç¬¦åˆè¿”å›-1ï¼Œå¦åˆ™è¿”å›é”™è¯¯çš„ä½ç½®
 int c_is_suit(int sudo[][9])
 {
 	for (int x = 0; x < 9; x++)
@@ -16,13 +16,13 @@ int c_is_suit(int sudo[][9])
 
 			int num = sudo[x][y];
 
-			for (int k = 0; k < 9; k++)//ÅĞ¶Ïµ±Ç°µÄĞĞ»òÕßÁĞÓĞÃ»ÓĞÏàÍ¬µÄÊı×Ö
+			for (int k = 0; k < 9; k++)//åˆ¤æ–­å½“å‰çš„è¡Œæˆ–è€…åˆ—æœ‰æ²¡æœ‰ç›¸åŒçš„æ•°å­—
 			{
 				if ((k != y && sudo[x][k] == num) || (k != x && sudo[k][y] == num))
 					return x*9+y;
 			}
 
-			//ÅĞ¶Ïµ±Ç°µÄ¹¬ÊÇ·ñÓĞÏàÍ¬µÄÊı×Ö
+			//åˆ¤æ–­å½“å‰çš„å®«æ˜¯å¦æœ‰ç›¸åŒçš„æ•°å­—
 			for (int i = 3 * (x / 3); i < 3 * (x / 3) + 3; i++)
 			{
 				for (int j = 3 * (y / 3); j < 3 * (y / 3) + 3; j++)
@@ -35,29 +35,27 @@ int c_is_suit(int sudo[][9])
 	}
 
 
-	return 1;
+	return -1;
 }
 
 
-//¼ì²âÎÄ¼şfilenameÖĞµÄÊı¶ÀÊÇ·ñÕıÈ·£¬²¢´òÓ¡½á¹û
+//æ£€æµ‹æ–‡ä»¶filenameä¸­çš„æ•°ç‹¬æ˜¯å¦æ­£ç¡®ï¼Œå¹¶æ‰“å°ç»“æœ
 int is_right(char* filename)
 {
 	FILE *fp;
-	errno_t open_error = fopen_s(&fp, filename, "r");//´ò¿ª³É¹¦·µ»Ø·ÇÁã£¬Ê§°Ü·µ»Ø0
+	errno_t open_error = fopen_s(&fp, filename, "r");//æ‰“å¼€æˆåŠŸè¿”å›éé›¶ï¼Œå¤±è´¥è¿”å›0
 	if (open_error)
 	{
-		printf("´ò¿ªÎÄ¼ş %s Ê§°Ü\n", filename);
+		printf("æ‰“å¼€æ–‡ä»¶ %s å¤±è´¥\n", filename);
 		return -1;
 	}
 
-	int check_result = 0;//Õû¸öÎÄ¼şµÄ¼ì²é½á¹û£¬ÍêÈ«ÎŞÎóÔòÎª0£¬·ñÔòÎª´íÎóµÄÊı¶ÀÊı
-	int order_number = 0;//µ±Ç°¼ì²éµÄÊı¶ÀµÄ±àºÅ
+	int file_check_result = 0;//æ•´ä¸ªæ–‡ä»¶çš„æ£€æŸ¥ç»“æœï¼Œå®Œå…¨æ— è¯¯åˆ™ä¸º0ï¼Œå¦åˆ™ä¸ºé”™è¯¯çš„æ•°ç‹¬æ•°
+	int sudoku_number = 0;//å½“å‰æ£€æŸ¥çš„æ•°ç‹¬çš„ç¼–å·
 	while (1)
 	{
-
-
 		int sudo[9][9] = { 0 };
-		//»ñÈ¡81¸öÊı£¬Èç¹ûÎ´×ã81¸öÊı¾ÍÒÑ¶Áµ½ÎÄ¼şÎ²£¬ÔòÍË³ö£¬·µ»Ø0
+		//è·å–81ä¸ªæ•°ï¼Œå¦‚æœæœªè¶³81ä¸ªæ•°å°±å·²è¯»åˆ°æ–‡ä»¶å°¾ï¼Œåˆ™é€€å‡ºï¼Œè¿”å›0
 		for (int i = 0; i < 9; i++)
 		{
 			for (int j = 0; j < 9; j++)
@@ -65,20 +63,20 @@ int is_right(char* filename)
 				char tem;
 				do
 				{
-					if (fscanf_s(fp, "%c", &tem, 1) == -1)//¶Áµ½ÎÄ¼şÎ²
+					if (fscanf_s(fp, "%c", &tem, 1) == -1)//è¯»åˆ°æ–‡ä»¶å°¾
 					{
 						fclose(fp);
 
-						if (check_result == 0)
+						if (file_check_result == 0)
 						{
-							printf("¼ì²éÍê±Ï£¬ÎŞÎó\n");
+							printf("æ£€æŸ¥å®Œæ¯•ï¼Œæ— è¯¯\n");
 						}
 						else
 						{
-							printf("¹²ÓĞ %d ¸öÊı¶À´íÎó\n", check_result);
+							printf("å…±æœ‰ %d ä¸ªæ•°ç‹¬é”™è¯¯\n", file_check_result);
 						}
 
-							return order_number;
+						return sudoku_number;
 					}
 
 				} while (tem<'0' || tem>'9');
@@ -88,18 +86,20 @@ int is_right(char* filename)
 			}
 		}
 
-		order_number++;
-		int now_right = c_is_suit(sudo);//µ±Ç°Êı¶ÀµÄ¼ì²é½á¹û£¬ÕıÈ·Îª-1£¬·ñÔòÎªÕıÊı
+		sudoku_number++;
+		int sudoku_check_result = c_is_suit(sudo);//å½“å‰æ•°ç‹¬çš„æ£€æŸ¥ç»“æœï¼Œæ­£ç¡®ä¸º-1ï¼Œå¦åˆ™ä¸ºæ­£æ•°
 		
-		if (now_right != -1)
+		if (sudoku_check_result != -1)
 		{
-			//·¢ÏÖµÄ´íÎóÔªËØµÄĞĞºÅºÍÁĞºÅ
-			int error_cow = now_right / 9;
-			int error_col = now_right % 9;
+			//å‘ç°çš„é”™è¯¯å…ƒç´ çš„è¡Œå·å’Œåˆ—å·
+			int error_cow = sudoku_check_result / 9;
+			int error_col = sudoku_check_result % 9;
 
-			printf("µÚ %d ºÅÊı¶ÀµÚ %d ĞĞµÚ %d ÁĞÓĞÎó\n");
+			printf("ç¬¬ %d å·æ•°ç‹¬ç¬¬ %d è¡Œç¬¬ %d åˆ—æœ‰è¯¯\n");
 
 		}
+		else
+			printf("ç¬¬ %d å·æ•°ç‹¬æ£€æµ‹æ— è¯¯\n", sudoku_number);
 
 
 	}
