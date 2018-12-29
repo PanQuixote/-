@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 			{
 				start = clock();
 
-				int n = generate_sudoku(N, "endgame.txt", 0);//生成n个数独终局并打印到endgame
+				int n = generate_sudoku(N, "sudoku.txt", 0);//生成n个数独终局并打印到sudoku.txt
 
 				printf("生成了 %d 个数独终局\n", n);
 			}
