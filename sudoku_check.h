@@ -92,10 +92,10 @@ int is_right(char* filename)
 		if (sudoku_check_result != -1)
 		{
 			//发现的错误元素的行号和列号
-			int error_cow = sudoku_check_result / 9;
+			int error_row = sudoku_check_result / 9;
 			int error_col = sudoku_check_result % 9;
 
-			printf("第 %d 号数独第 %d 行第 %d 列有误\n");
+			printf("第 %d 号数独第 %d 行第 %d 列有误\n", error_row, error_col);
 
 		}
 		else
