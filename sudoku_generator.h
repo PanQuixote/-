@@ -71,15 +71,18 @@ void move_se(char* se, char* result, int n)
 void change_into_problem(char* sudoku_string)
 {
 	srand((unsigned int)(time(NULL)));
-	int blank_sum = rand() % 3 + 4;//每个宫的空白数，范围[4,6]
 
+	//总挖空数
+	int blank_sum = 30 + rand() % 30;
+
+	//每个宫挖空两个格
 	for (int x = 0; x <= 2; x++)
 	{
 		for (int y = 0; y <= 2; y++)
 		{
 			int is_exit[9] = { 0 };
 			int pos;
-			for (int t = 1; t <= blank_sum; t++)
+			for (int t = 1; t <= 2; t++)
 			{
 				do
 				{
@@ -96,6 +99,22 @@ void change_into_problem(char* sudoku_string)
 
 			}
 		}
+	}
+
+	//随机挖空直到达到总挖空数
+	for (int i = 1; i <= blank_sum - 2 * 9; i++)
+	{
+		int pos, row, col;
+
+		do
+		{
+			pos = rand() % 81;
+			row = pos / 9;
+			col = pos % 9;
+			col *= 2;
+		} while (sudoku_string[row * 18 + col] == '0');
+
+		sudoku_string[row * 18 + col] = '0';
 	}
 }
 
