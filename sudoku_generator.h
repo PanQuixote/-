@@ -7,9 +7,9 @@
 
 using namespace std;
 
-//¼ÇÂ¼ÒÆ¶¯µÄ·½Ê½¡£Ã¿ÐÐ¼ÇÂ¼Éú³ÉÒ»¸öÊý¶ÀÊ±ÐèÒª½øÐÐµÄ²Ù×÷¡£
-//ÀýÈç£¬µÚÒ»ÐÐ 0,3,6,1,4,7,2,5,8 ±íÊ¾£¬Êý¶ÀµÚÒ»ÐÐÓÉÊýÁÐseÏòÓÒÒÆ¶¯0Î»µÃµ½£»Êý¶ÀµÚ¶þÐÐÓÉseÏòÓÒÒÆ¶¯3Î»µÃµ½¡­¡­
-//´ËÊý×é¹²ÓÐ30ÐÐ£¬´ú±íÍ¨¹ýÒ»¸öÊýÁÐ¿ÉÒÔ»ñµÃ30¸öÊý¶À¡£
+//è®°å½•ç§»åŠ¨çš„æ–¹å¼ã€‚æ¯è¡Œè®°å½•ç”Ÿæˆä¸€ä¸ªæ•°ç‹¬æ—¶éœ€è¦è¿›è¡Œçš„æ“ä½œã€‚
+//ä¾‹å¦‚ï¼Œç¬¬ä¸€è¡Œ 0,3,6,1,4,7,2,5,8 è¡¨ç¤ºï¼Œæ•°ç‹¬ç¬¬ä¸€è¡Œç”±æ•°åˆ—seå‘å³ç§»åŠ¨0ä½å¾—åˆ°ï¼›æ•°ç‹¬ç¬¬äºŒè¡Œç”±seå‘å³ç§»åŠ¨3ä½å¾—åˆ°â€¦â€¦
+//æ­¤æ•°ç»„å…±æœ‰30è¡Œï¼Œä»£è¡¨é€šè¿‡ä¸€ä¸ªæ•°åˆ—å¯ä»¥èŽ·å¾—30ä¸ªæ•°ç‹¬ã€‚
 int move_way[30][9] = {
 	{ 0,3,6,1,4,7,2,5,8 },
 	{ 0,3,6,1,7,4,2,5,8 },
@@ -50,85 +50,69 @@ int move_way[30][9] = {
 	{ 0,6,3,7,1,4,8,5,2 },
 };
 
-//½«ÊýÁÐseÏòÓÒÒÆ¶¯mÎ»£¬ÒÆ¶¯ºóµÄ½á¹û´æÈëresult
+//å°†æ•°åˆ—seå‘å³ç§»åŠ¨nä½ï¼Œç§»åŠ¨åŽçš„ç»“æžœå­˜å…¥result
 void move_se(char* se, char* result, int n)
 {
 	for (int i = 0; i < n; i++)
-		result[i] = se[9 - n + i];
+	{
+		result[i * 2] = se[9 - n + i];
+		result[i * 2 + 1] = ' ';
+	}
 
 	for (int i = n; i < 9; i++)
-		result[i] = se[i - n];
-}
-
-//½«ÊýÁÐse×ª»¯³É·ûºÏÒªÇóµÄ¸ñÊ½£¬´æ´¢ÔÚse_string
-void se_change_into_string(char* se, char* se_string)
-{
-	for (int x = 0; x < 9; x++)
 	{
-		se_string[x * 2] = se[x];
-
-		if (x != 8)
-			se_string[x * 2 + 1] = ' ';
-		else
-			se_string[x * 2 + 1] = '\n';
+		result[i * 2] = se[i - n];
+		result[i * 2 + 1] = ' ';
 	}
-	se_string[18] = '\0';
+	result[17] = '\n';
 }
 
-//Éú³ÉN¸öÊý¶ÀÖÕ¾Öµ½ÎÄ¼þfile_nameÖÐ¡£
+//ç”ŸæˆNä¸ªæ•°ç‹¬ç»ˆå±€åˆ°æ–‡ä»¶file_nameä¸­ã€‚
 int generate_sudoku(int N, char* file_name)
 {
 	FILE *fp;
-	errno_t open_error = fopen_s(&fp, file_name, "w");//´ò¿ª³É¹¦·µ»Ø·ÇÁã£¬Ê§°Ü·µ»Ø0
+	errno_t open_error = fopen_s(&fp, file_name, "w");//æ‰“å¼€æˆåŠŸè¿”å›žéžé›¶ï¼Œå¤±è´¥è¿”å›ž0
+
+	char se[9] = { '2','1','3','4','5','6','7','8','9' };//å­¦å·åŽä¸¤ä½ä¸º5ã€5ï¼Œ(5+5)%9+1=2ï¼Œæ‰€ä»¥æ•°åˆ—é¦–ä½ä¸º2
 
 
-	char se[9] = { '2','1','3','4','5','6','7','8','9' };//Ñ§ºÅºóÁ½Î»Îª5¡¢5£¬(5+5)%9+1=2£¬ËùÒÔÊýÁÐÊ×Î»Îª2
-	char copy[9] = { 0 };//ÊýÁÐµÄ¸±±¾¡£¼ÇÂ¼ÊýÁÐÒÆ¶¯ºóµÄ½á¹û¡£
-
-	int sudoku_sum = 0;//ÒÑÉú³ÉµÄÊý¶ÀÖÕ¾ÖÊý
+	int sudoku_sum = 0;//å·²ç”Ÿæˆçš„æ•°ç‹¬ç»ˆå±€æ•°
 
 	while (1)
 	{
-		next_permutation(&se[1], &se[1] + 8);//¶ÔseµÄµÚ¶þÎ»µ½µÚ¾ÅÎ»½øÐÐÈ«ÅÅÁÐ±ä»»£¬µÃµ½Ò»¸öÐÂÊýÁÐ
+		next_permutation(&se[1], &se[1] + 8);//å¯¹seçš„ç¬¬äºŒä½åˆ°ç¬¬ä¹ä½è¿›è¡Œå…¨æŽ’åˆ—å˜æ¢ï¼Œå¾—åˆ°ä¸€ä¸ªæ–°æ•°åˆ—
 
-		for (int i = 0; i < 30; i++)//¶ÔÃ¿¸öÊýÁÐ£¬Éú³É30¸öÊý¶À
+		for (int i = 0; i < 30; i++)//å¯¹æ¯ä¸ªæ•°åˆ—ï¼Œç”Ÿæˆ30ä¸ªæ•°ç‹¬
 		{
-			char sudoku_string[18 * 9 + 1] = { 0 };//Êý¶ÀµÄ×Ö·û´®ÐÎÊ½
-			char se_string[18 + 1] = { 0 };//Ò»ÐÐÊý¶ÀµÄ×Ö·û´®ÐÎÊ½
+			char sudoku_string[18 * 9 + 1] = { 0 };//ä¸€ä¸ªæ•°ç‹¬ç»ˆå±€çš„å­—ç¬¦ä¸²å½¢å¼
+			char se_string[18 + 1] = { 0 };//ä¸€è¡Œæ•°ç‹¬çš„å­—ç¬¦ä¸²å½¢å¼
 
 			for (int j = 0; j < 9; j++)
 			{
-				move_se(se, copy, move_way[i][j]);//°´ÕÕÒÆ¶¯±íÀ´ÒÆ¶¯ÊýÁÐse£¬ÒÆ¶¯ºóµÄ½á¹û´æÔÚcopy
-
-				se_change_into_string(copy, se_string);//½«copy×ª»¯Îª·ûºÏ¸ñÊ½µÄ×Ö·û´®
-
-				strcat_s(sudoku_string, se_string);//½«copyÆ´½Óµ½Êý¶ÀÖÕ¾Ö×Ö·û´®ÖÐ
+				//æŒ‰ç…§ç§»åŠ¨è¡¨æ¥ç§»åŠ¨æ•°åˆ—seï¼Œç§»åŠ¨åŽçš„ç»“æžœæ‹¼æŽ¥åœ¨sudoku_stringåŽé¢
+				move_se(se, &sudoku_string[strlen(sudoku_string)], move_way[i][j]);
 			}
+			sudoku_string[18 * 9] = '\n';
 
 			sudoku_sum++;
 
-			if (sudoku_sum != N)
-				sudoku_string[18 * 9] = '\n';
-			else
+			if (sudoku_sum == N)//å·²ç”Ÿæˆè¶³å¤Ÿæ•°ç›®çš„ç»ˆå±€
 			{
 				sudoku_string[18 * 9 - 1] = '\0';
-				sudoku_string[18 * 9] = '\0';
-			}
-
-			fputs(sudoku_string, fp);//Êä³öÊý¶ÀÖÕ¾Ö×Ö·û´®µ½ÎÄ¼þ
-
-			if (sudoku_sum == N)//ÒÑÉú³É×ã¹»ÊýÄ¿µÄÖÕ¾Ö
-			{
+				sudoku_string[18 * 9] = '\0';			
+				fputs(sudoku_string, fp);//è¾“å‡ºæ•°ç‹¬ç»ˆå±€å­—ç¬¦ä¸²åˆ°æ–‡ä»¶
 				fclose(fp);
 				return N;
 			}
+
+			fputs(sudoku_string, fp);//è¾“å‡ºæ•°ç‹¬ç»ˆå±€å­—ç¬¦ä¸²åˆ°æ–‡ä»¶
 		}
 
 	}
 
 }
 
-//°ÑÖÕ¾Ösudoku×ª»¯ÎªÌâÄ¿,´æÔÚproblem
+//æŠŠç»ˆå±€sudokuè½¬åŒ–ä¸ºé¢˜ç›®,å­˜åœ¨problem
 void change_into_problem(const char sudoku[][9], char problem[][9])
 {
 
@@ -137,7 +121,7 @@ void change_into_problem(const char sudoku[][9], char problem[][9])
 			problem[x][y] = sudoku[x][y];
 
 	srand((unsigned int)(time(NULL)));
-	int blank_sum = rand() % 3 + 4;//Ã¿¸ö¹¬µÄ¿Õ°×Êý£¬·¶Î§[4,6]
+	int blank_sum = rand() % 3 + 4;//æ¯ä¸ªå®«çš„ç©ºç™½æ•°ï¼ŒèŒƒå›´[4,6]
 
 	for (int x = 0; x <= 2; x++)
 	{
@@ -163,43 +147,43 @@ void change_into_problem(const char sudoku[][9], char problem[][9])
 	}
 }
 
-//Éú³ÉN¸öÊý¶ÀÌâµ½ÎÄ¼þfile_nameÖÐ£¬Èç¹ûÉú³ÉÊ§°Ü·µ»Ø0£¬·ñÔò·µ»ØN
+//ç”ŸæˆNä¸ªæ•°ç‹¬é¢˜åˆ°æ–‡ä»¶file_nameä¸­ï¼Œå¦‚æžœç”Ÿæˆå¤±è´¥è¿”å›ž0ï¼Œå¦åˆ™è¿”å›žN
 int generate_problem(int N, char* file_name)
 {
 	FILE *fp;
-	errno_t open_error = fopen_s(&fp, file_name, "w");//´ò¿ª³É¹¦·µ»Ø·ÇÁã£¬Ê§°Ü·µ»Ø0
+	errno_t open_error = fopen_s(&fp, file_name, "w");//æ‰“å¼€æˆåŠŸè¿”å›žéžé›¶ï¼Œå¤±è´¥è¿”å›ž0
 	if (open_error)
 	{
-		printf("´ò¿ªÎÄ¼þ %s Ê§°Ü\n", file_name);
+		printf("æ‰“å¼€æ–‡ä»¶ %s å¤±è´¥\n", file_name);
 		return 0;
 	}
 
-	char se[9] = { '2','1','3','4','5','6','7','8','9' };//Ñ§ºÅºóÁ½Î»Îª5¡¢5£¬(5+5)%9+1=2£¬ËùÒÔÊýÁÐÊ×Î»Îª2
-	char copy[9][9] = { 0 };//ÊýÁÐµÄ¸±±¾¡£¼ÇÂ¼ÊýÁÐÒÆ¶¯ºóµÄ½á¹û¡£
+	char se[9] = { '2','1','3','4','5','6','7','8','9' };//å­¦å·åŽä¸¤ä½ä¸º5ã€5ï¼Œ(5+5)%9+1=2ï¼Œæ‰€ä»¥æ•°åˆ—é¦–ä½ä¸º2
+	char copy[9][9] = { 0 };//æ•°åˆ—çš„å‰¯æœ¬ã€‚è®°å½•æ•°åˆ—ç§»åŠ¨åŽçš„ç»“æžœã€‚
 
-	int problem_sum = 0;//ÒÑÉú³ÉµÄÊý¶ÀÖÕ¾ÖÊý
+	int problem_sum = 0;//å·²ç”Ÿæˆçš„æ•°ç‹¬ç»ˆå±€æ•°
 
 	while (1)
 	{
-		next_permutation(&se[1], &se[1] + 8);//¶ÔseµÄµÚ¶þÎ»µ½µÚ¾ÅÎ»½øÐÐÈ«ÅÅÁÐ±ä»»£¬µÃµ½Ò»¸öÐÂÊýÁÐ
+		next_permutation(&se[1], &se[1] + 8);//å¯¹seçš„ç¬¬äºŒä½åˆ°ç¬¬ä¹ä½è¿›è¡Œå…¨æŽ’åˆ—å˜æ¢ï¼Œå¾—åˆ°ä¸€ä¸ªæ–°æ•°åˆ—
 
-		for (int i = 0; i < 30; i++)//¶ÔÃ¿¸öÊýÁÐ£¬Éú³É30¸öÊý¶À
+		for (int i = 0; i < 30; i++)//å¯¹æ¯ä¸ªæ•°åˆ—ï¼Œç”Ÿæˆ30ä¸ªæ•°ç‹¬
 		{
-			char sudoku_string[18 * 9 + 1] = { 0 };//Êý¶ÀµÄ×Ö·û´®ÐÎÊ½
-			char se_string[18 + 1] = { 0 };//Ò»ÐÐÊý¶ÀµÄ×Ö·û´®ÐÎÊ½
+			char sudoku_string[18 * 9 + 1] = { 0 };//æ•°ç‹¬çš„å­—ç¬¦ä¸²å½¢å¼
+			char se_string[18 + 1] = { 0 };//ä¸€è¡Œæ•°ç‹¬çš„å­—ç¬¦ä¸²å½¢å¼
 
 			for (int j = 0; j < 9; j++)
 			{
-				move_se(se, copy[j], move_way[i][j]);//°´ÕÕÒÆ¶¯±íÀ´ÒÆ¶¯ÊýÁÐse£¬ÒÆ¶¯ºóµÄ½á¹û´æÔÚcopy
+				move_se(se, copy[j], move_way[i][j]);//æŒ‰ç…§ç§»åŠ¨è¡¨æ¥ç§»åŠ¨æ•°åˆ—seï¼Œç§»åŠ¨åŽçš„ç»“æžœå­˜åœ¨copy
 			}
 
-			change_into_problem(copy, copy);//½«copy×ª»¯ÎªÊý¶ÀÌâ
+			change_into_problem(copy, copy);//å°†copyè½¬åŒ–ä¸ºæ•°ç‹¬é¢˜
 
 			for (int j = 0; j < 9; j++)
 			{
-				se_change_into_string(copy[j], se_string);//½«copy×ª»¯Îª·ûºÏ¸ñÊ½µÄ×Ö·û´®
+				se_change_into_string(copy[j], se_string);//å°†copyè½¬åŒ–ä¸ºç¬¦åˆæ ¼å¼çš„å­—ç¬¦ä¸²
 
-				strcat_s(sudoku_string, se_string);//½«copyÆ´½Óµ½Êý¶ÀÖÕ¾Ö×Ö·û´®ÖÐ
+				strcat_s(sudoku_string, se_string);//å°†copyæ‹¼æŽ¥åˆ°æ•°ç‹¬ç»ˆå±€å­—ç¬¦ä¸²ä¸­
 			}
 
 
@@ -213,9 +197,9 @@ int generate_problem(int N, char* file_name)
 				sudoku_string[18 * 9] = '\0';
 			}
 
-			fputs(sudoku_string, fp);//Êä³öÊý¶ÀÖÕ¾Ö×Ö·û´®µ½ÎÄ¼þ
+			fputs(sudoku_string, fp);//è¾“å‡ºæ•°ç‹¬ç»ˆå±€å­—ç¬¦ä¸²åˆ°æ–‡ä»¶
 
-			if (problem_sum == N)//ÒÑÉú³É×ã¹»ÊýÄ¿µÄÖÕ¾Ö
+			if (problem_sum == N)//å·²ç”Ÿæˆè¶³å¤Ÿæ•°ç›®çš„ç»ˆå±€
 			{
 				fclose(fp);
 				return N;
